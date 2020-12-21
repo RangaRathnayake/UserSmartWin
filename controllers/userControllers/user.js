@@ -29,6 +29,7 @@ exports.userLogin = (req, res, next) => {
                     console.log(user);
                     bcript.compare(req.body.pword, user.pword, (err, result) => {
                         if (err) {
+                            console.log(err);
                             return res.status(401).json({ message: 'user name or password is wrong' });
                         } else {
                             if (result) {
@@ -52,6 +53,8 @@ exports.userLogin = (req, res, next) => {
                             }
                         }
                     });
+                } else {
+                    console.log(e);
                 }
             });
     } catch (error) {
