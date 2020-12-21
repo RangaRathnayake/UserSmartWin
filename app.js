@@ -21,13 +21,13 @@ const allowedOrigins = [
     'capacitor://localhost',
     'ionic://localhost',
     'http://localhost',
-    'https://smartwin.lk/',
-    'http://smartwin.lk/',
+    'https://smartwin.lk',
+    'http://smartwin.lk',
     'http://localhost:4200',
     'http://localhost:8080',
     'http://localhost:8100',
-    'https://api.smartwin.lk/',
-    'http://api.smartwin.lk/'
+    'https://api.smartwin.lk',
+    'http://api.smartwin.lk'
 
 ];
 
