@@ -23,7 +23,11 @@ const allowedOrigins = [
     'http://localhost',
     'http://localhost:4200',
     'http://localhost:8080',
-    'http://localhost:8100'
+    'http://localhost:8100',
+    'https://api.smartwin.lk/',
+    'http://api.smartwin.lk/',
+    'https://smartwin.lk/',
+    'http://smartwin.lk/'
 ];
 
 const corsOptions = {
