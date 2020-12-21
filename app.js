@@ -23,6 +23,8 @@ const allowedOrigins = [
     'http://localhost',
     'https://smartwin.lk',
     'http://smartwin.lk',
+    'https://sw.smartwin.lk',
+    'http://sw.smartwin.lk',
     'http://localhost:4200',
     'http://localhost:8080',
     'http://localhost:8100',
