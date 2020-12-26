@@ -197,14 +197,20 @@ exports.sendLoginInformation = (uid) => {
                 });
 
                 console.log(mobile + ' -- ' + email + ' -- ' + name);
+
                 textMg += "Welcome to Smart Win Entrepreneur !" +
                     "  Dear " + name + " your  SW No: " + uid + " and your verification number : " + val + "" +
                     "";
+
+
                 mg.emailSend({
                     to: email,
                     subject: 'Smart Win Entrepreneur',
                     message: textMg
                 });
+
+
+
                 mg.smsSend({ mob: mobile, message: textMg });
                 console.log(textMg);
                 //  res.send({ ok: textMg });

@@ -105,7 +105,10 @@ exports.newNode = (req, res, next) => {
                                                     // console.log("000000000000000000000000000000000000000");
 
                                                     this.addToTree(para, res, next);
+
                                                     userController.sendLoginInformation(userID);
+
+                                                    console.log("================================================== "+ userID + " for sms")
 
                                                     mycon.execute("INSERT INTO `sw_installment` ( `userId`, `invoiceId`, `paidAmount`, `prodId`, `paidDate`, `status` )" +
                                                         " VALUES	( '" + cusID + "', '" + invoiceID + "', '" + b.firstPay + "', '" + prod.idProd + "', '" + day + "', 1 )", (eror, rows, fildData) => {
@@ -288,7 +291,7 @@ exports.addToTree = (param, res, next) => {
                                         let idB = null;
 
                                         mycon.execute("INSERT INTO `sw_tree` ( `parentId`, `A`, `B`, `userId`, `commitionId`, `APoint`, `BPoint`, `layar`, `status`, `userName`, `other1`, `other2` )"
-                                            + "  VALUES ( " + treeId + ", NULL, NULL, " + param.uid + ", NULL, 0, 0, 0, 0, '../../../assets/img/profile.png', 0, '0' )", (err, roo, fii) => {
+                                            + "  VALUES ( " + treeId + ", NULL, NULL, " + param.uid + ", NULL, 0, 0, 0, 0, '../../../assets/img/x-button.png', 0, '0' )", (err, roo, fii) => {
                                                 if (!err) {
                                                     idA = roo.insertId;
                                                     mycon.execute("UPDATE `sw_tree` SET `A`='" + idA + "' WHERE `swTreeId`=" + treeId, (errr, rooo, fiii) => {
@@ -303,7 +306,7 @@ exports.addToTree = (param, res, next) => {
                                                 }
                                             });
                                         mycon.execute("INSERT INTO `sw_tree` ( `parentId`, `A`, `B`, `userId`, `commitionId`, `APoint`, `BPoint`, `layar`, `status`, `userName`, `other1`, `other2` )"
-                                            + "  VALUES ( " + treeId + ", NULL, NULL, " + param.uid + ", NULL, 0, 0, 0, 0, '../../../assets/img/profile.png', 0, '0' )", (err, roo, fii) => {
+                                            + "  VALUES ( " + treeId + ", NULL, NULL, " + param.uid + ", NULL, 0, 0, 0, 0, '../../../assets/img/x-button.png', 0, '0' )", (err, roo, fii) => {
                                                 if (!err) {
                                                     idB = roo.insertId;
                                                     mycon.execute("UPDATE `sw_tree` SET `B`='" + idB + "' WHERE `swTreeId`=" + treeId, (errr, rooo, fiii) => {

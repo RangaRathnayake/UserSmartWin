@@ -82,13 +82,14 @@ exports.smsSend = (param) => {
             let message = param.message;
             let mobile = param.mob;
 
+            console.log(" ----------------------------------- mobile : " + mobile)
 
             http.get("" + link + "id=" + id + "&password=" + pword + "&text=" + message + "&to=" + mobile + "&from=SmartWin"
                 , function (err, res, body) {
                     if (err) {
                         console.log("SMS  -------------- eroor on");
                         console.log(body);
-                       // console.log(err);
+                        // console.log(err);
                     } else {
                         console.log("SMS Sent ---------------");
                         console.log(body);
