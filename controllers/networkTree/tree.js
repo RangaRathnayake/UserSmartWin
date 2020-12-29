@@ -108,7 +108,7 @@ exports.newNode = (req, res, next) => {
 
                                                     userController.sendLoginInformation(userID);
 
-                                                    console.log("================================================== "+ userID + " for sms")
+                                                    console.log("================================================== " + userID + " for sms")
 
                                                     mycon.execute("INSERT INTO `sw_installment` ( `userId`, `invoiceId`, `paidAmount`, `prodId`, `paidDate`, `status` )" +
                                                         " VALUES	( '" + cusID + "', '" + invoiceID + "', '" + b.firstPay + "', '" + prod.idProd + "', '" + day + "', 1 )", (eror, rows, fildData) => {
@@ -191,14 +191,14 @@ exports.getDownTree = (req, res, next) => {
     try {
         let arr = [];
         function getNode(id) {
-            mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.swTreeId AS title,sw_tree.parentId AS pid,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name` FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + id,
+            mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS pid,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + id,
                 (error, rows, fildData) => {
                     if (!error) {
                         let nod = rows[0];
-                        console.log('-----------------------------------------------------');
-                        console.log(nod);
-                        console.log('------------------------------------------------------');
-                        
+                        // console.log('-----------------------------------------------------');
+                        // console.log(nod);
+                        // console.log('------------------------------------------------------');
+
                         if (nod) {
                             arr.push(nod);
                             if (nod.A && nod.A > 0) {
@@ -216,7 +216,7 @@ exports.getDownTree = (req, res, next) => {
         getNode(req.body.id);
 
         setTimeout(() => {
-            console.log(arr);
+           // console.log(arr);
             res.send(arr);
         }, 2000);
 
