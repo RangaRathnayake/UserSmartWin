@@ -45,6 +45,99 @@ exports.getFullTree = (req, res, next) => {
     }
 }
 
+exports.getFreePins = (req, res, next) => {
+    try {
+        mycon.execute("SELECT sw_tree.swTreeId,sw_tree.parentId,sw_tree.A,sw_tree.B,sw_tree.userId,sw_tree.commitionId,sw_tree.APoint,sw_tree.BPoint,sw_tree.layar,sw_tree.`status`,sw_tree.userName,sw_tree.other1,sw_tree.other2 FROM sw_tree WHERE sw_tree.userId= '" + req.body.swid + "' AND (sw_tree.A IS NULL OR sw_tree.B IS NULL)",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.getNotActive = (req, res, next) => {
+    try {
+        mycon.execute("SELECT sw_tree.swTreeId,sw_tree.parentId,sw_tree.A,sw_tree.B,sw_tree.userId,sw_tree.commitionId,sw_tree.APoint,sw_tree.BPoint,sw_tree.layar,sw_tree.`status`,sw_tree.userName,sw_tree.other1,sw_tree.other2 FROM sw_tree WHERE sw_tree.userId='" + req.body.swid + "' AND sw_tree.commitionId IS NULL",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.activeNode = (req, res, next) => {
+    try {
+        console.log(req.body);
+        var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+
+        mycon.execute("SELECT sw_prod.idProd,sw_prod.prodName,sw_prod.prodImage,sw_prod.prodPrice,sw_prod.prodPoint,sw_prod.prodOther,sw_prod.prodStatus FROM sw_prod WHERE sw_prod.idProd=" + req.body.product,
+            (e, r, f) => {
+                if (!e) {
+                    let prod = r[0];
+                    mycon.execute("INSERT INTO  `sw_invoice` (   `date`, `userId`, `totalValue`, `productId`, `pin` )" +
+                        " VALUES	(   '" + day + "', '" + req.body.swid + "', '" + req.body.firstPay + "', '" + req.body.product + "','" + req.body.aPin + "' )", (ee, rr, f) => {
+                            if (!ee) {
+                                let invoiceID = rr.insertId;
+                                mycon.execute("INSERT INTO `sw_installment` ( `userId`, `invoiceId`, `paidAmount`, `prodId`, `paidDate`, `status`, `pin` )" +
+                                    " VALUES	( '" + req.body.swid + "', '" + invoiceID + "', '" + req.body.firstPay + "', '" + prod.idProd + "', '" + day + "', 1 ,'" + req.body.aPin + "')", (eee, rrr, f) => {
+                                        if (!eee) {
+                                            mycon.execute("SELECT sw_commition.idCommition,sw_commition.register_date,sw_commition.userId,sw_commition.introducerid,sw_commition.introducerCommitionId,sw_commition.`status` FROM sw_commition WHERE sw_commition.userId='" + req.body.swid + "' ORDER BY sw_commition.idCommition ASC", (er, ro, ff) => {
+                                                if (!er) {
+                                                    let introCom = ro[0].idCommition;
+
+                                                    mycon.execute("INSERT INTO `sw_commition`(`register_date`, `userId`, `introducerid`, `introducerCommitionId`, `status`) " +
+                                                        " VALUES ('" + day + "', " + req.body.swid + ", " + req.body.swid + ", " + introCom + ", 1)", (eeee, rrrr, f) => {
+                                                            if (!eeee) {
+                                                                let comid = rrrr.insertId;
+                                                                mycon.execute("UPDATE `sw_tree` SET `commitionId`='" + comid + "' ,`status` = 1 ,`userName` = '../../../assets/img/profile.png' WHERE `swTreeId`=" + req.body.aPin, (error, rows, fi) => {
+                                                                    if (!error) {
+                                                                        res.send(rrrr);
+                                                                    } else {
+                                                                        console.log(error);
+                                                                    }
+                                                                });
+                                                            } else {
+                                                                console.log(eeee)
+                                                            }
+                                                        });
+                                                } else {
+                                                    console.log(ro);
+                                                }
+                                            });
+                                        } else {
+                                            console.log(eee);
+                                        }
+                                    });
+                            } else {
+                                console.log(ee);
+                            }
+                        });
+                } else {
+                    console.log(e);
+                }
+            });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+
+
 exports.newNode = (req, res, next) => {
 
 
@@ -197,8 +290,7 @@ exports.getDownTree = (req, res, next) => {
                         let nod = rows[0];
                         // console.log('-----------------------------------------------------');
                         // console.log(nod);
-                        // console.log('------------------------------------------------------');
-
+                        // console.log('------------------------------------------------------');       
                         if (nod) {
                             arr.push(nod);
                             if (nod.A && nod.A > 0) {
@@ -216,7 +308,7 @@ exports.getDownTree = (req, res, next) => {
         getNode(req.body.id);
 
         setTimeout(() => {
-           // console.log(arr);
+            // console.log(arr);
             res.send(arr);
         }, 2000);
 
