@@ -77,6 +77,29 @@ exports.getNotActive = (req, res, next) => {
 }
 
 
+exports.saveCustomer = (param, prod, tid, rnext) => {
+
+
+    try {
+        var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+        mycon.execute("INSERT INTO `customer` ( `adl1`, `adl2`, `adl3`, `city`, `status`, `mobile`, `tp`, `user_id`, `register_date`, `product_id`, `name` ) " +
+            " VALUES 	( '" + this.realEscapeString(param.cusAddressl1) + "', '" + this.realEscapeString(param.cusAddressl2) + "', '" + this.realEscapeString(param.cusAddressl3) + "', '" + this.realEscapeString(param.cusCity) + "', 1, '" + this.realEscapeString(param.cusTpno) + "', '" + this.realEscapeString(param.cusNic) + "', " + tid + ",'" + day + "', '" + prod + "',  '" + this.realEscapeString(param.cusName) + "' )",
+            (error, rows, fildData) => {
+                if (!error) {
+                    rnext(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+
+
 exports.activeNode = (req, res, next) => {
     try {
         console.log(req.body);
@@ -135,7 +158,88 @@ exports.activeNode = (req, res, next) => {
     }
 }
 
+exports.newPlacement = (req, res, next) => {
+    try {
 
+        let b = req.body;
+        let userID = b.userData;
+        var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+      //  console.log(req.body);
+
+        mycon.execute("SELECT sw_prod.idProd,sw_prod.prodName,sw_prod.prodImage,sw_prod.prodPrice,sw_prod.prodPoint,sw_prod.prodOther,sw_prod.prodStatus FROM sw_prod WHERE sw_prod.idProd=" + b.product, (eee, rrr, fff) => {
+            if (!eee) {
+                let prod = rrr[0];
+
+                if (b.type === 'other') {
+
+                    this.saveCustomer(b.purchaser, prod.idProd, userID, ddd => {
+                        // console.log("++++++++++++");
+                        // console.log(ddd);
+                        // console.log("++++++++++++++");
+
+                        mycon.execute("INSERT INTO  `sw_invoice` (   `date`, `userId`, `totalValue`, `productId`, `cusid` )" +
+                            " VALUES	(   '" + day + "', '" + userID + "', '" + b.firstPay + "', '" + prod.idProd + "','" + ddd.insertId + "' )", (er, ro, fi) => {
+                                if (!er) {
+                                    let invoiceID = ro.insertId;
+                                    let para = {
+                                        uid: userID,
+                                        parent: b.aPin,
+                                        side: b.side,
+                                        point: prod.prodPoint,
+                                        intro: b.introUid,
+                                        invoice: invoiceID,
+                                    }
+
+                                    // console.log("000000000000000000000000000000000000000");
+                                    // console.log(para);
+                                    // console.log("000000000000000000000000000000000000000");
+
+                                    this.addToTree(para, res, next);
+
+                                    userController.sendLoginInformation(userID);
+
+                                    // console.log("================================================== " + userID + " for sms")
+
+                                    mycon.execute("INSERT INTO `sw_installment` ( `userId`, `invoiceId`, `paidAmount`, `prodId`, `paidDate`, `status` )" +
+                                        " VALUES	( '" + userID + "', '" + invoiceID + "', '" + b.firstPay + "', '" + prod.idProd + "', '" + day + "', 1 )", (eror, rows, fildData) => {
+                                            if (eror) {
+                                                console.log(eror);
+                                            }
+                                        });
+                                }
+                            });
+                    });
+                } else {
+                    mycon.execute("INSERT INTO  `sw_invoice` (   `date`, `userId`, `totalValue`, `productId`)" +
+                        " VALUES	(   '" + day + "', '" + userID + "', '" + b.firstPay + "', '" + prod.idProd + "' )", (er, ro, fi) => {
+                            if (!er) {
+                                let invoiceID = ro.insertId;
+
+                                let para = {
+                                    invoice: invoiceID,
+                                    uid: userID,
+                                    parent: b.aPin,
+                                    side: b.side,
+                                    point: prod.prodPoint,
+                                    intro: b.introUid
+                                }
+                                this.addToTree(para, res, next);
+                                userController.sendLoginInformation(userID);
+                                mycon.execute("INSERT INTO `sw_installment` ( `userId`, `invoiceId`, `paidAmount`, `prodId`, `paidDate`, `status` )" +
+                                    " VALUES	( '" + userID + "', '" + invoiceID + "', '" + b.firstPay + "', '" + prod.idProd + "', '" + day + "', 1 )", (eror, rows, fildData) => {
+                                        if (eror) {
+                                            console.log(eror);
+                                        }
+                                    });
+                            }
+                        });
+                }
+            }
+        });
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 
 exports.newNode = (req, res, next) => {
@@ -157,70 +261,63 @@ exports.newNode = (req, res, next) => {
         let cusID = 0;
         var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
         if (b.type === 'other') {
-            mycon.execute("INSERT INTO `user` ( `mobileno`, `status`, `dateTime`, `utypeId` ) " +
-                "  VALUES	( '" + b.purchaser.cusTpno + "', 0, '" + day + "', 5 )", (e, r, f) => {
-                    if (!e) {
-                        cusID = r.insertId;
-                        this.setUserVal({ uid: cusID, key: 2, val: b.purchaser.cusName });
-                        this.setUserVal({ uid: cusID, key: 5, val: b.purchaser.cusAddressl1 });
-                        this.setUserVal({ uid: cusID, key: 6, val: b.purchaser.cusAddressl2 });
-                        this.setUserVal({ uid: cusID, key: 7, val: b.purchaser.cusAddressl3 });
-                        this.setUserVal({ uid: cusID, key: 8, val: b.purchaser.cusCity });
-                        this.setUserVal({ uid: cusID, key: 21, val: b.purchaser.cusNic });
-                        this.setUserVal({ uid: cusID, key: 9, val: b.purchaser.cusTpno });
+            mycon.execute("INSERT INTO `user` (  `status`, `dateTime`, `utypeId` ) VALUES (0, '" + day + "', 4 )", (ee, rr, ff) => {
+                if (!ee) {
+                    userID = rr.insertId;
+                    b.vlaues.forEach(e => {
+                        this.setUserVal({ uid: userID, key: e.idUserKey, val: e.val });
+                    });
+                    mycon.execute("SELECT sw_prod.idProd,sw_prod.prodName,sw_prod.prodImage,sw_prod.prodPrice,sw_prod.prodPoint,sw_prod.prodOther,sw_prod.prodStatus FROM sw_prod WHERE sw_prod.idProd=" + b.product, (eee, rrr, fff) => {
+                        if (!eee) {
+                            let prod = rrr[0];
 
+                            this.saveCustomer(b.purchaser, prod.idProd, userID, ddd => {
+                                console.log("++++++++++++");
+                                console.log(ddd);
+                                console.log("++++++++++++++");
 
-                        mycon.execute("INSERT INTO `user` (  `status`, `dateTime`, `utypeId` ) VALUES (0, '" + day + "', 4 )", (ee, rr, ff) => {
-                            if (!ee) {
-                                userID = rr.insertId;
-                                b.vlaues.forEach(e => {
-                                    this.setUserVal({ uid: userID, key: e.idUserKey, val: e.val });
-                                });
+                                mycon.execute("INSERT INTO  `sw_invoice` (   `date`, `userId`, `totalValue`, `productId`, `cusid` )" +
+                                    " VALUES	(   '" + day + "', '" + userID + "', '" + b.firstPay + "', '" + prod.idProd + "','" + ddd.insertId + "' )", (er, ro, fi) => {
+                                        if (!er) {
+                                            let invoiceID = ro.insertId;
+                                            let para = {
+                                                uid: userID,
+                                                parent: b.aPin,
+                                                side: b.side,
+                                                point: prod.prodPoint,
+                                                intro: b.introUid,
+                                                invoice: invoiceID,
+                                            }
 
-                                mycon.execute("SELECT sw_prod.idProd,sw_prod.prodName,sw_prod.prodImage,sw_prod.prodPrice,sw_prod.prodPoint,sw_prod.prodOther,sw_prod.prodStatus FROM sw_prod WHERE sw_prod.idProd=" + b.product, (eee, rrr, fff) => {
-                                    if (!eee) {
-                                        let prod = rrr[0];
-                                        mycon.execute("INSERT INTO  `sw_invoice` (   `date`, `userId`, `totalValue`, `productId` )" +
-                                            " VALUES	(   '" + day + "', '" + cusID + "', '" + b.firstPay + "', '" + prod.idProd + "' )", (er, ro, fi) => {
-                                                if (!er) {
-                                                    let invoiceID = ro.insertId;
-                                                    let para = {
-                                                        uid: userID,
-                                                        parent: b.aPin,
-                                                        side: b.side,
-                                                        point: prod.prodPoint,
-                                                        intro: b.introUid,
-                                                        invoice: invoiceID,
+                                            // console.log("000000000000000000000000000000000000000");
+                                            console.log(para);
+                                            // console.log("000000000000000000000000000000000000000");
+
+                                            this.addToTree(para, res, next);
+
+                                            userController.sendLoginInformation(userID);
+
+                                            console.log("================================================== " + userID + " for sms")
+
+                                            mycon.execute("INSERT INTO `sw_installment` ( `userId`, `invoiceId`, `paidAmount`, `prodId`, `paidDate`, `status` )" +
+                                                " VALUES	( '" + userID + "', '" + invoiceID + "', '" + b.firstPay + "', '" + prod.idProd + "', '" + day + "', 1 )", (eror, rows, fildData) => {
+                                                    if (eror) {
+                                                        console.log(eror);
                                                     }
+                                                });
+                                        }
+                                    });
 
-                                                    // console.log("000000000000000000000000000000000000000");
-                                                    console.log(para);
-                                                    // console.log("000000000000000000000000000000000000000");
+                            });
 
-                                                    this.addToTree(para, res, next);
 
-                                                    userController.sendLoginInformation(userID);
+                        } else { console.log(eee); }
+                    });
+                } else {
+                    console.log(ee);
+                }
+            });
 
-                                                    console.log("================================================== " + userID + " for sms")
-
-                                                    mycon.execute("INSERT INTO `sw_installment` ( `userId`, `invoiceId`, `paidAmount`, `prodId`, `paidDate`, `status` )" +
-                                                        " VALUES	( '" + cusID + "', '" + invoiceID + "', '" + b.firstPay + "', '" + prod.idProd + "', '" + day + "', 1 )", (eror, rows, fildData) => {
-                                                            if (eror) {
-                                                                console.log(eror);
-                                                            }
-                                                        });
-                                                }
-                                            });
-                                    } else { console.log(eee); }
-                                });
-                            } else {
-                                console.log(ee);
-                            }
-                        });
-                    } else {
-                        console.log(e);
-                    }
-                });
         } else {
             mycon.execute("INSERT INTO `user` (  `status`, `dateTime`, `utypeId` ) VALUES (0, '" + day + "', 4 )", (ee, rr, ff) => {
                 if (!ee) {
@@ -231,7 +328,7 @@ exports.newNode = (req, res, next) => {
                     mycon.execute("SELECT sw_prod.idProd,sw_prod.prodName,sw_prod.prodImage,sw_prod.prodPrice,sw_prod.prodPoint,sw_prod.prodOther,sw_prod.prodStatus FROM sw_prod WHERE sw_prod.idProd=" + b.product, (eee, rrr, fff) => {
                         if (!eee) {
                             let prod = rrr[0];
-                            mycon.execute("INSERT INTO  `sw_invoice` (   `date`, `userId`, `totalValue`, `productId` )" +
+                            mycon.execute("INSERT INTO  `sw_invoice` (   `date`, `userId`, `totalValue`, `productId`)" +
                                 " VALUES	(   '" + day + "', '" + userID + "', '" + b.firstPay + "', '" + prod.idProd + "' )", (er, ro, fi) => {
                                     if (!er) {
                                         let invoiceID = ro.insertId;
@@ -549,15 +646,11 @@ exports.addToTree = (param, res, next) => {
 
 exports.addPoint = (param, res, next) => {
 
-    // console.log("11111111111111111111111111111111");
     console.log(param);
-    // console.log("11111111111111111111111111111111");
 
     let invoiceID = param.invoice;
 
     try {
-
-
 
         function calPoint(nod) {
             let aPoint = 0;
@@ -615,7 +708,6 @@ exports.addPoint = (param, res, next) => {
                 }
             });
         }
-
 
         mycon.execute("SELECT sw_tree.swTreeId,sw_tree.parentId,sw_tree.A,sw_tree.B,sw_tree.userId,sw_tree.commitionId,sw_tree.APoint,sw_tree.BPoint,sw_tree.layar,sw_tree.`status`,sw_tree.userName,sw_tree.other1,sw_tree.other2 FROM sw_tree WHERE sw_tree.swTreeId=  " + param.tid,
             (e, r, f) => {

@@ -3,6 +3,37 @@ const jwt = require('jsonwebtoken');
 const bcript = require('bcrypt');
 var dateFormat = require('dateformat');
 const mg = require('../../middleware/email');
+const { param } = require('../../routers');
+
+
+exports.realEscapeString = (str) => {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+            case "%":
+                return "\\" + char; // prepends a backslash to backslash, percent,
+            // and double/single quotes
+        }
+    });
+}
+
+
+
+
 // getAllUsers 
 exports.getAllUsers = (req, res, next) => {
     try {
@@ -265,7 +296,56 @@ exports.getTreeId = (req, res, next) => {
         console.log(error);
         res.status(500).send(error);
     }
+}
 
+
+exports.getUsersList = (req, res, next) => {
+    try {
+        mycon.execute("SELECT `user`.idUser,uservalue.`value` FROM `user` INNER JOIN uservalue ON uservalue.userId=`user`.idUser INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.keyId=2 ORDER BY `user`.idUser ASC", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.update = (req, res, next) => {
+    try {
+        req.body.udata.forEach(ee => {
+            console.log(ee);
+            this.updateUserValues(ee);
+        });
+
+
+        res.send({ "ok": "updated" });
+
+        setTimeout(() => {
+            this.sendLoginInformation(req.body.udata[0].userId);
+        }, 2000);
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.updateUserValues = (parm) => {
+
+    let q = "UPDATE `uservalue` SET `value`='" + this.realEscapeString(parm.value) + "' WHERE `idUserValue`= " + parm.idUserValue;
+
+    mycon.execute(q, (er, ro, fi) => {
+        if (!er) {
+            return;
+        } else {
+            console.log(er)
+            return;
+        }
+    });
 }
 
 // forgetPassword
