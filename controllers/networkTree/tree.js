@@ -164,7 +164,7 @@ exports.newPlacement = (req, res, next) => {
         let b = req.body;
         let userID = b.userData;
         var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
-      //  console.log(req.body);
+        //  console.log(req.body);
 
         mycon.execute("SELECT sw_prod.idProd,sw_prod.prodName,sw_prod.prodImage,sw_prod.prodPrice,sw_prod.prodPoint,sw_prod.prodOther,sw_prod.prodStatus FROM sw_prod WHERE sw_prod.idProd=" + b.product, (eee, rrr, fff) => {
             if (!eee) {
@@ -194,7 +194,7 @@ exports.newPlacement = (req, res, next) => {
                                     // console.log(para);
                                     // console.log("000000000000000000000000000000000000000");
 
-                                    this.addToTree(para, res, next);
+                                    this.addOneToTree(para, res, next);
 
                                     userController.sendLoginInformation(userID);
 
@@ -223,7 +223,7 @@ exports.newPlacement = (req, res, next) => {
                                     point: prod.prodPoint,
                                     intro: b.introUid
                                 }
-                                this.addToTree(para, res, next);
+                                this.addOneToTree(para, res, next);
                                 userController.sendLoginInformation(userID);
                                 mycon.execute("INSERT INTO `sw_installment` ( `userId`, `invoiceId`, `paidAmount`, `prodId`, `paidDate`, `status` )" +
                                     " VALUES	( '" + userID + "', '" + invoiceID + "', '" + b.firstPay + "', '" + prod.idProd + "', '" + day + "', 1 )", (eror, rows, fildData) => {
@@ -422,6 +422,46 @@ exports.getDownTreeLimited = (req, res, next) => {
     let parentId = 0;
     try {
         let arr = [];
+
+        console.log(req.body);
+
+        if (req.body.type == 'true') {
+            getNode(req.body.id);
+            console.log('true');
+        } else {
+            console.log('false');
+            if (req.body.id > 0) {
+                mycon.execute("SELECT sw_tree.parentId FROM sw_tree WHERE sw_tree.swTreeId= " + req.body.id, (e, r, f) => {
+                    if (!e) {
+                        console.log(r);
+                        getNode(r[0].parentId);
+                    }
+                })
+            } else {
+                getNode(1);
+            }
+
+        }
+
+
+        function pointSum(nod) {
+            mycon.execute("SELECT sw_point.Side,Sum(sw_point.point) as point FROM sw_point WHERE sw_point.treeid='" + nod.id + "' AND sw_point.`status`='1' AND sw_point.Side='A' ", (e, r, f) => {
+                if (!e) {
+                    if (r[0].point != null)
+                        nod.pointA = r[0].point;
+                    mycon.execute("SELECT sw_point.Side,Sum(sw_point.point) as point FROM sw_point WHERE sw_point.treeid='" + nod.id + "' AND sw_point.`status`='1' AND sw_point.Side='B' ", (e, r, f) => {
+                        if (!e) {
+                            if (r[0].point != null)
+                                nod.pointB = r[0].point;
+                            arr.push(nod);
+                        }
+                    });
+                }
+            });
+
+        }
+
+
         function getNode(id) {
 
             mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + id,
@@ -431,14 +471,14 @@ exports.getDownTreeLimited = (req, res, next) => {
                         if (d) {
                             let nod = { id: d.id, name: d.name, side: '', pointA: d.APoint, pointB: d.BPoint, parent: 0, A: d.A, B: d.B, uid: d.userId, active: d.title };
                             parentId = nod.id;
-                            arr.push(nod);
+                            pointSum(nod);
                             if (nod.A && nod.A > 0) {
                                 mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + nod.A, (e, r, f) => {
                                     if (!e) {
                                         var d = r[0];
                                         if (d) {
                                             let no = { id: d.id, name: d.name, side: 'A', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
-                                            arr.push(no);
+                                            pointSum(no);
 
                                             if (no.A && no.A > 0) {
                                                 mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + no.A, (e, r, f) => {
@@ -446,7 +486,32 @@ exports.getDownTreeLimited = (req, res, next) => {
                                                         var d = r[0];
                                                         if (d) {
                                                             let n = { id: d.id, name: d.name, side: 'A', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
-                                                            arr.push(n);
+                                                            pointSum(n);
+
+                                                            if (n.A && n.A > 0) {
+                                                                mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + n.A, (e, r, f) => {
+                                                                    if (!e) {
+                                                                        var d = r[0];
+                                                                        if (d) {
+                                                                            let nn = { id: d.id, name: d.name, side: 'A', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
+                                                                            pointSum(nn);
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            if (n.B && n.B > 0) {
+                                                                mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + n.B, (e, r, f) => {
+                                                                    if (!e) {
+                                                                        var d = r[0];
+                                                                        if (d) {
+                                                                            let nn = { id: d.id, name: d.name, side: 'B', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
+                                                                            pointSum(nn);
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
+
                                                         }
                                                     }
                                                 });
@@ -458,7 +523,30 @@ exports.getDownTreeLimited = (req, res, next) => {
                                                         var d = r[0];
                                                         if (d) {
                                                             let n = { id: d.id, name: d.name, side: 'B', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
-                                                            arr.push(n);
+                                                            pointSum(n);
+                                                            if (n.A && n.A > 0) {
+                                                                mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + n.A, (e, r, f) => {
+                                                                    if (!e) {
+                                                                        var d = r[0];
+                                                                        if (d) {
+                                                                            let nn = { id: d.id, name: d.name, side: 'A', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
+                                                                            pointSum(nn);
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            if (n.B && n.B > 0) {
+                                                                mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + n.B, (e, r, f) => {
+                                                                    if (!e) {
+                                                                        var d = r[0];
+                                                                        if (d) {
+                                                                            let nn = { id: d.id, name: d.name, side: 'B', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
+                                                                            pointSum(nn);
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
                                                         }
                                                     }
                                                 });
@@ -475,7 +563,7 @@ exports.getDownTreeLimited = (req, res, next) => {
                                         var d = r[0];
                                         if (d) {
                                             let no = { id: d.id, name: d.name, side: 'B', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
-                                            arr.push(no);
+                                            pointSum(no);
 
                                             if (no.A && no.A > 0) {
                                                 mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + no.A, (e, r, f) => {
@@ -483,7 +571,30 @@ exports.getDownTreeLimited = (req, res, next) => {
                                                         var d = r[0];
                                                         if (d) {
                                                             let n = { id: d.id, name: d.name, side: 'A', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
-                                                            arr.push(n);
+                                                            pointSum(n);
+                                                            if (n.A && n.A > 0) {
+                                                                mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + n.A, (e, r, f) => {
+                                                                    if (!e) {
+                                                                        var d = r[0];
+                                                                        if (d) {
+                                                                            let nn = { id: d.id, name: d.name, side: 'A', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
+                                                                            pointSum(nn);
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            if (n.B && n.B > 0) {
+                                                                mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + n.B, (e, r, f) => {
+                                                                    if (!e) {
+                                                                        var d = r[0];
+                                                                        if (d) {
+                                                                            let nn = { id: d.id, name: d.name, side: 'B', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
+                                                                            pointSum(nn);
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
                                                         }
                                                     }
                                                 });
@@ -495,7 +606,30 @@ exports.getDownTreeLimited = (req, res, next) => {
                                                         var d = r[0];
                                                         if (d) {
                                                             let n = { id: d.id, name: d.name, side: 'B', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
-                                                            arr.push(n);
+                                                            pointSum(n);
+                                                            if (n.A && n.A > 0) {
+                                                                mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + n.A, (e, r, f) => {
+                                                                    if (!e) {
+                                                                        var d = r[0];
+                                                                        if (d) {
+                                                                            let nn = { id: d.id, name: d.name, side: 'A', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
+                                                                            pointSum(nn);
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
+
+                                                            if (n.B && n.B > 0) {
+                                                                mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + n.B, (e, r, f) => {
+                                                                    if (!e) {
+                                                                        var d = r[0];
+                                                                        if (d) {
+                                                                            let nn = { id: d.id, name: d.name, side: 'B', pointA: d.APoint, pointB: d.BPoint, parent: d.parent, A: d.A, B: d.B, uid: d.userId, active: d.title };
+                                                                            pointSum(nn);
+                                                                        }
+                                                                    }
+                                                                });
+                                                            }
                                                         }
                                                     }
                                                 });
@@ -510,7 +644,7 @@ exports.getDownTreeLimited = (req, res, next) => {
                 });
         }
 
-        getNode(req.body.id);
+
 
         setTimeout(() => {
             //  console.log(arr);
@@ -643,6 +777,93 @@ exports.addToTree = (param, res, next) => {
 
 
 
+exports.addOneToTree = (param, res, next) => {
+    try {
+        // var param = req.body;
+        var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+
+        // {
+        //     "uid": 1000,
+        //     "parent": 13,
+        //     "side": "A",
+        //     "point": 1,
+        //     "intro": 12,
+        //     "introCom": 14,
+        // }
+
+        mycon.execute("SELECT sw_commition.idCommition,sw_commition.register_date,sw_commition.userId,sw_commition.introducerid,sw_commition.introducerCommitionId,sw_commition.`status` FROM sw_commition WHERE sw_commition.userId='" + param.intro + "' ORDER BY sw_commition.idCommition ASC", (ee, rr, ff) => {
+            if (!ee) {
+                let introCom = rr[0].idCommition;
+                mycon.execute("INSERT INTO `sw_commition`(`register_date`, `userId`, `introducerid`, `introducerCommitionId`, `status`) " +
+                    " VALUES ('" + day + "', " + param.uid + ", " + param.intro + ", " + introCom + ", 1)", (e, r, f) => {
+                        if (!e) {
+                            let comId = r.insertId;
+                            mycon.execute("INSERT INTO  `sw_tree` (  `parentId`, `A`, `B`, `userId`, `commitionId`, `APoint`, `BPoint`, `layar`, `status`, `userName`, `other1`, `other2` ) " +
+                                "  VALUES	( " + param.parent + ", NULL, NULL, " + param.uid + ", " + comId + ", 0, 0, 0, 1, '../../../assets/img/profile.png', 0, '0' )", (er, ro, fi) => {
+                                    if (!er) {
+                                        let treeId = ro.insertId;
+
+                                        console.log('---------');
+                                        console.log(treeId);
+                                        console.log('---------');
+
+
+                                        mycon.execute("UPDATE `sw_invoice` SET `pin`='" + treeId + "' WHERE `idInvoice`= " + param.invoice, (ee, rr, ff) => {
+                                            if (ee) {
+                                                console.log(ee);
+                                            }
+                                        });
+
+                                        mycon.execute("UPDATE `sw_installment` SET `pin`='" + treeId + "' WHERE `invoiceId`=" + param.invoice, (ee, rr, ff) => {
+                                            if (ee) {
+                                                console.log(ee);
+                                            }
+                                        })
+
+                                        if (param.side === 'A') {
+                                            mycon.execute("UPDATE `sw_tree` SET `A`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
+                                                if (!errr) {
+                                                } else {
+                                                    console.log(errr);
+                                                }
+                                            });
+                                        }
+                                        if (param.side === 'B') {
+                                            mycon.execute("UPDATE `sw_tree` SET `B`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
+                                                if (!errr) {
+                                                } else {
+                                                    console.log(errr);
+                                                }
+                                            });
+                                        }
+
+                                        let idA = null;
+                                        let idB = null;
+
+                                        let object = { "idMain": treeId, "A": idA, "B": idB, extra: param }
+                                        this.addPoint({ tid: treeId, obj: object, invoice: param.invoice }, res, next);
+
+
+
+                                    } else {
+                                        console.log(er);
+                                    }
+                                });
+                        } else { console.log(e) }
+                    });
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+        //  res.status(500).send(error);
+    }
+}
+
+
+
+
+
 
 exports.addPoint = (param, res, next) => {
 
@@ -659,9 +880,22 @@ exports.addPoint = (param, res, next) => {
             mycon.execute("SELECT sw_point.userId,sw_point.commitionId,sw_point.Side,sum(sw_point.point) AS sum,sw_point.`status`,sw_point.treeid FROM sw_point WHERE sw_point.Side='A' AND sw_point.treeid='" + nod.swTreeId + "' AND sw_point.`status`='1'", (e, r, f) => {
                 if (!e) {
                     aPoint = r[0].sum;
-                    mycon.execute("SELECT sw_point.userId,sw_point.commitionId,sw_point.Side,sum(sw_point.point) AS sum,sw_point.`status`,sw_point.treeid FROM sw_point WHERE sw_point.Side='B' AND sw_point.treeid='" + nod.swTreeId + "' AND sw_point.`status`='1'", (e, r, f) => {
+
+                    mycon.execute("UPDATE `sw_tree` SET `APoint`=" + aPoint + " WHERE `swTreeId`= " + nod.swTreeId, (ee, rr, ff) => {
+                        if (ee) {
+                            console.log(ee);
+                        }
+                    })
+
+                    mycon.execute("SELECT sw_point.userId,sw_point.commitionId,sw_point.Side,sum(sw_point.point) AS sum,sw_point.`status`,sw_point.treeid FROM sw_point WHERE sw_point.Side='B' AND sw_point.treeid='" + nod.swTreeId + "' AND sw_point.`status`='1'", (e, rr, f) => {
                         if (!e) {
-                            bPoint = r[0].sum;
+                            bPoint = rr[0].sum;
+                            mycon.execute("UPDATE `sw_tree` SET `BPoint`=" + bPoint + " WHERE `swTreeId`= " + nod.swTreeId, (eee, rr, ff) => {
+                                if (eee) {
+                                    console.log(eee);
+                                }
+                            })
+
                             console.log("Node   -  " + nod.swTreeId + "   A Point- " + aPoint + "       B Point- " + bPoint);
                         }
                     });
@@ -682,6 +916,7 @@ exports.addPoint = (param, res, next) => {
                                 mycon.execute("INSERT INTO  `sw_point`(  `userId`, `commitionId`, `invoiceId`, `Side`, `point`, `status`, `treeid`) VALUES (  '" + nod.userId + "', '" + nod.commitionId + "', '" + invoiceID + "', 'A', 1, 1,'" + nod.swTreeId + "')", (ee, rr, ff) => {
                                     if (ee) {
                                         console.log(ee);
+                                        //   calPoint(nod)
                                     }
                                 })
                             } else {
@@ -694,6 +929,7 @@ exports.addPoint = (param, res, next) => {
                                 mycon.execute("INSERT INTO  `sw_point`(  `userId`, `commitionId`, `invoiceId`, `Side`, `point`, `status`, `treeid`) VALUES (  '" + nod.userId + "', '" + nod.commitionId + "', '" + invoiceID + "', 'B', 1, 1,'" + nod.swTreeId + "')", (ee, rr, ff) => {
                                     if (ee) {
                                         console.log(ee);
+                                        //    calPoint(nod);
                                     }
                                 })
 
@@ -720,6 +956,7 @@ exports.addPoint = (param, res, next) => {
 
 
         res.send(param.obj);
+
     } catch (error) {
         console.log(error);
         res.status(500).send(error);
