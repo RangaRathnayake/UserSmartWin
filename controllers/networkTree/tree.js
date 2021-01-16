@@ -467,7 +467,7 @@ exports.getDownTreeLimited = (req, res, next) => {
             mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS parent,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + id,
                 (error, rows, fildData) => {
                     if (!error) {
-                        let d = rows[0];
+                        var d = rows[0];
                         if (d) {
                             let nod = { id: d.id, name: d.name, side: '', pointA: d.APoint, pointB: d.BPoint, parent: 0, A: d.A, B: d.B, uid: d.userId, active: d.title };
                             parentId = nod.id;
@@ -714,6 +714,7 @@ exports.addToTree = (param, res, next) => {
                                                 }
                                             });
                                         }
+
                                         if (param.side === 'B') {
                                             mycon.execute("UPDATE `sw_tree` SET `B`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
                                                 if (!errr) {
@@ -731,7 +732,23 @@ exports.addToTree = (param, res, next) => {
                                                     idA = roo.insertId;
                                                     mycon.execute("UPDATE `sw_tree` SET `A`='" + idA + "' WHERE `swTreeId`=" + treeId, (errr, rooo, fiii) => {
                                                         if (!errr) {
-
+                                                            mycon.execute("INSERT INTO `sw_tree` ( `parentId`, `A`, `B`, `userId`, `commitionId`, `APoint`, `BPoint`, `layar`, `status`, `userName`, `other1`, `other2` )"
+                                                                + "  VALUES ( " + treeId + ", NULL, NULL, " + param.uid + ", NULL, 0, 0, 0, 0, '../../../assets/img/x-button.png', 0, '0' )", (err, roo, fii) => {
+                                                                    if (!err) {
+                                                                        idB = roo.insertId;
+                                                                        mycon.execute("UPDATE `sw_tree` SET `B`='" + idB + "' WHERE `swTreeId`=" + treeId, (errr, rooo, fiii) => {
+                                                                            if (!errr) {
+                                                                                let object = { "idMain": treeId, "A": idA, "B": idB, extra: param }
+                                                                                this.addPoint({ tid: treeId, obj: object, invoice: param.invoice }, res, next);
+                                                                            } else {
+                                                                                console.log(errr);
+                                                                            }
+                                                                        });
+                                                                    } else {
+                                                                        console.log(err);
+                                                                    }
+                                                                }
+                                                            );
                                                         } else {
                                                             console.log(errr);
                                                         }
@@ -739,26 +756,9 @@ exports.addToTree = (param, res, next) => {
                                                 } else {
                                                     console.log(err);
                                                 }
-                                            });
-                                        mycon.execute("INSERT INTO `sw_tree` ( `parentId`, `A`, `B`, `userId`, `commitionId`, `APoint`, `BPoint`, `layar`, `status`, `userName`, `other1`, `other2` )"
-                                            + "  VALUES ( " + treeId + ", NULL, NULL, " + param.uid + ", NULL, 0, 0, 0, 0, '../../../assets/img/x-button.png', 0, '0' )", (err, roo, fii) => {
-                                                if (!err) {
-                                                    idB = roo.insertId;
-                                                    mycon.execute("UPDATE `sw_tree` SET `B`='" + idB + "' WHERE `swTreeId`=" + treeId, (errr, rooo, fiii) => {
-                                                        if (!errr) {
+                                            }
+                                        );
 
-                                                            let object = { "idMain": treeId, "A": idA, "B": idB, extra: param }
-                                                            this.addPoint({ tid: treeId, obj: object, invoice: param.invoice }, res, next);
-
-
-                                                        } else {
-                                                            console.log(errr);
-                                                        }
-                                                    });
-                                                } else {
-                                                    console.log(err);
-                                                }
-                                            });
                                     } else {
                                         console.log(er);
                                     }

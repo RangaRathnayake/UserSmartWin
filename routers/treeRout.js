@@ -1,10 +1,10 @@
 var express = require('express');
 var router = express.Router();
 const tree = require('../controllers/networkTree/tree');
-
+const commition = require('../controllers/networkTree/commition');
 const checkAuth = require('../middleware/check-auth');
 
-//user
+// tree
 router.post("/getFullTree", tree.getFullTree);
 router.post("/addToTree", tree.addToTree);
 router.post("/canAdd", tree.canAdd);
@@ -20,5 +20,7 @@ router.post("/getDownTreeLimited", tree.getDownTreeLimited);
 router.post("/newPlacement", tree.newPlacement);
 
 
+// commition
+router.post("/balancePoint", commition.balancePoint);
 
 module.exports = router;
