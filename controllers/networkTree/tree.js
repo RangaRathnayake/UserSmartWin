@@ -126,7 +126,9 @@ exports.activeNode = (req, res, next) => {
                                                                 let comid = rrrr.insertId;
                                                                 mycon.execute("UPDATE `sw_tree` SET `commitionId`='" + comid + "' ,`status` = 1 ,`userName` = '../../../assets/img/profile.png' WHERE `swTreeId`=" + req.body.aPin, (error, rows, fi) => {
                                                                     if (!error) {
-                                                                        res.send(rrrr);
+                                                                        let object = { "idMain": req.body.aPin, "A": 0, "B": 0, extra: '' }
+                                                                        this.addPoint({ tid: req.body.aPin, obj: object, invoice: invoiceID }, res, next);
+                                                                      ///  res.send(rrrr);
                                                                     } else {
                                                                         console.log(error);
                                                                     }
@@ -1042,6 +1044,40 @@ exports.getCurrent = (req, res, next) => {
     }
 }
 
+exports.getIntroduser = (req, res, next) => {
+    try {
+
+        mycon.execute("SELECT uservalue.`value`,sw_commition.idCommition,sw_commition.introducerid FROM uservalue INNER JOIN sw_commition ON sw_commition.introducerid=uservalue.userId WHERE uservalue.keyId=2 AND sw_commition.idCommition= " + req.body.comid, (e, r, f) => {
+            if (!e) {
+                res.send(r);
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.updateIntroduser = (req, res, next) => {
+    try {
+
+        mycon.execute("SELECT sw_commition.idCommition,sw_commition.register_date,sw_commition.userId,sw_commition.introducerid,sw_commition.introducerCommitionId,sw_commition.`status` FROM sw_commition WHERE sw_commition.userId='" + req.body.newIntro + "' ORDER BY sw_commition.idCommition ASC", (e, r, f) => {
+            if (!e) {
+                let incom = r[0].idCommition;
+                console.log(incom);
+                mycon.execute("UPDATE `sw_commition` SET `introducerid`='" + req.body.newIntro + "',`introducerCommitionId`='" + incom + "' WHERE `idCommition`='" + req.body.comid + "'", (ee, rr, ff) => {
+                    res.send(rr);
+                });
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
 
 exports.getCurrentPoint = (req, res, next) => {
     try {
@@ -1059,6 +1095,8 @@ exports.getCurrentPoint = (req, res, next) => {
         res.status(500).send(error);
     }
 }
+
+
 
 
 

@@ -12,6 +12,8 @@ router.post("/addPoint", tree.addPoint);
 router.post("/getDownTree", tree.getDownTree);
 router.post("/newNode", tree.newNode);
 router.post("/getCurrent", tree.getCurrent);
+router.post("/getIntroduser", tree.getIntroduser);
+router.post("/updateIntroduser", tree.updateIntroduser);
 router.post("/getCurrentPoint", tree.getCurrentPoint);
 router.post("/getFreePins", tree.getFreePins);
 router.post("/getNotActive", tree.getNotActive);
@@ -22,5 +24,9 @@ router.post("/newPlacement", tree.newPlacement);
 
 // commition
 router.post("/balancePoint", commition.balancePoint);
+router.post("/process", commition.process);
+router.post("/getProcess", commition.getProcess);
+router.post("/getPointCommitonList", commition.getPointCommitonList);
+router.post("/getIntroCommitonList", commition.getIntroCommitonList);
 
 module.exports = router;
