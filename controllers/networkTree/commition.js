@@ -331,7 +331,7 @@ exports.getProcess = (req, res, next) => {
 
 exports.getPointCommitonList = (req, res, next) => {
     try {
-        mycon.execute("SELECT sw_pointcommition.idPointcomition,sw_pointcommition.user_id,sw_pointcommition.tree_id,sw_pointcommition.commition_id,sw_pointcommition.process_id,sw_pointcommition.amount,sw_pointcommition.`status`,GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') as udata FROM sw_pointcommition INNER JOIN uservalue ON uservalue.userId=sw_pointcommition.user_id WHERE sw_pointcommition.process_id='" + req.body.processID + "' AND (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18)", (e, r, f) => {
+        mycon.execute("SELECT sw_pointcommition.idPointcomition,sw_pointcommition.user_id,sw_pointcommition.tree_id,sw_pointcommition.commition_id,sw_pointcommition.process_id,sw_pointcommition.amount,sw_pointcommition.`status`,GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') as udata FROM sw_pointcommition INNER JOIN uservalue ON uservalue.userId=sw_pointcommition.user_id WHERE sw_pointcommition.process_id='" + req.body.processID + "' AND (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) GROUP BY sw_pointcommition.idPointcomition", (e, r, f) => {
             if (!e) {
                 res.send(r);
             }
@@ -344,7 +344,7 @@ exports.getPointCommitonList = (req, res, next) => {
 
 exports.getIntroCommitonList = (req, res, next) => {
     try {
-        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND sw_introcommition.process_id='" + req.body.processID + "'", (e, r, f) => {
+        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND sw_introcommition.process_id='" + req.body.processID + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
             if (!e) {
                 res.send(r);
             }
