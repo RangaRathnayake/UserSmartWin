@@ -205,8 +205,10 @@ exports.processC = (req, res, next, d) => {
                 if (!ee) {
                     console.log(rr.insertId);
                     let pintcom = rr.insertId;
+                    console.log("-------------------------------  " + d.comid);
                     mycon.execute("SELECT sw_commition.userId,sw_commition.introducerid,sw_commition.introducerCommitionId FROM sw_commition WHERE sw_commition.idCommition=" + d.comid, (eee, rrr, ff) => {
                         if (!eee) {
+                            console.log("++++++++++++++++++++++++++++++++++++++++++++++ " + rrr[0].introducerid);
                             let introid = rrr[0].introducerid;
                             let introcom = rrr[0].introducerCommitionId;
                             let comiton = d.amount * 10 / 100;
