@@ -223,6 +223,8 @@ exports.processC = (req, res, next, d) => {
                                             round: d.round
                                         }
                                         this.processD(req, res, next, obj);
+                                    } else {
+                                        console.log(e);
                                     }
                                 });
                         } else {
