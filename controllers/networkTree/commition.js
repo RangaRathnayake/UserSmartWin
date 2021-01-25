@@ -212,7 +212,7 @@ exports.processC = (req, res, next, d) => {
                             let introid = rrr[0].introducerid;
                             let introcom = rrr[0].introducerCommitionId;
                             let comiton = d.amount * 10 / 100;
-                            mycon.execute("INSERT INTO `user`.`sw_introcommition`( `user_id`, `tree_id`, `process_id`, `commition_id`, `pointcom_id`, `amount`, `status`) "
+                            mycon.execute("INSERT INTO `sw_introcommition`( `user_id`, `tree_id`, `process_id`, `commition_id`, `pointcom_id`, `amount`, `status`) "
                                 + " VALUES ( '" + introid + "', '" + d.tid + "', '" + d.prosid + "', '" + d.comid + "', '" + pintcom + "', '" + comiton + "', 1)", (e, r, f) => {
                                     if (!e) {
                                         console.log(r);
