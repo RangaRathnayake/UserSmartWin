@@ -128,7 +128,7 @@ exports.activeNode = (req, res, next) => {
                                                                     if (!error) {
                                                                         let object = { "idMain": req.body.aPin, "A": 0, "B": 0, extra: '' }
                                                                         this.addPoint({ tid: req.body.aPin, obj: object, invoice: invoiceID }, res, next);
-                                                                      ///  res.send(rrrr);
+                                                                        ///  res.send(rrrr);
                                                                     } else {
                                                                         console.log(error);
                                                                     }
@@ -1064,11 +1064,15 @@ exports.updateIntroduser = (req, res, next) => {
 
         mycon.execute("SELECT sw_commition.idCommition,sw_commition.register_date,sw_commition.userId,sw_commition.introducerid,sw_commition.introducerCommitionId,sw_commition.`status` FROM sw_commition WHERE sw_commition.userId='" + req.body.newIntro + "' ORDER BY sw_commition.idCommition ASC", (e, r, f) => {
             if (!e) {
-                let incom = r[0].idCommition;
-                console.log(incom);
-                mycon.execute("UPDATE `sw_commition` SET `introducerid`='" + req.body.newIntro + "',`introducerCommitionId`='" + incom + "' WHERE `idCommition`='" + req.body.comid + "'", (ee, rr, ff) => {
-                    res.send(rr);
-                });
+                if (r[0]) {
+                    let incom = r[0].idCommition;
+                    console.log(incom);
+                    mycon.execute("UPDATE `sw_commition` SET `introducerid`='" + req.body.newIntro + "',`introducerCommitionId`='" + incom + "' WHERE `idCommition`='" + req.body.comid + "'", (ee, rr, ff) => {
+                        res.send(rr);
+                    });
+                } else {
+                    res.status(401).send({ "ok": "Not Found" });
+                }
             }
         });
 

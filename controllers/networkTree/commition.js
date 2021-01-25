@@ -223,6 +223,8 @@ exports.processC = (req, res, next, d) => {
                                         this.processD(req, res, next, obj);
                                     }
                                 });
+                        } else {
+                            console.log(eee);
                         }
                     });
                 }
