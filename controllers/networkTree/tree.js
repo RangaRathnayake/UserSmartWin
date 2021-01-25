@@ -102,7 +102,7 @@ exports.saveCustomer = (param, prod, tid, rnext) => {
 
 exports.activeNode = (req, res, next) => {
     try {
-        console.log(req.body);
+        //    console.log(req.body);
         var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
 
         mycon.execute("SELECT sw_prod.idProd,sw_prod.prodName,sw_prod.prodImage,sw_prod.prodPrice,sw_prod.prodPoint,sw_prod.prodOther,sw_prod.prodStatus FROM sw_prod WHERE sw_prod.idProd=" + req.body.product,
@@ -274,9 +274,9 @@ exports.newNode = (req, res, next) => {
                             let prod = rrr[0];
 
                             this.saveCustomer(b.purchaser, prod.idProd, userID, ddd => {
-                                console.log("++++++++++++");
-                                console.log(ddd);
-                                console.log("++++++++++++++");
+                                // console.log("++++++++++++");
+                                // console.log(ddd);
+                                // console.log("++++++++++++++");
 
                                 mycon.execute("INSERT INTO  `sw_invoice` (   `date`, `userId`, `totalValue`, `productId`, `cusid` )" +
                                     " VALUES	(   '" + day + "', '" + userID + "', '" + b.firstPay + "', '" + prod.idProd + "','" + ddd.insertId + "' )", (er, ro, fi) => {
@@ -292,14 +292,14 @@ exports.newNode = (req, res, next) => {
                                             }
 
                                             // console.log("000000000000000000000000000000000000000");
-                                            console.log(para);
+                                            // console.log(para);
                                             // console.log("000000000000000000000000000000000000000");
 
                                             this.addToTree(para, res, next);
 
                                             userController.sendLoginInformation(userID);
 
-                                            console.log("================================================== " + userID + " for sms")
+                                            // console.log("================================================== " + userID + " for sms")
 
                                             mycon.execute("INSERT INTO `sw_installment` ( `userId`, `invoiceId`, `paidAmount`, `prodId`, `paidDate`, `status` )" +
                                                 " VALUES	( '" + userID + "', '" + invoiceID + "', '" + b.firstPay + "', '" + prod.idProd + "', '" + day + "', 1 )", (eror, rows, fildData) => {
@@ -425,17 +425,17 @@ exports.getDownTreeLimited = (req, res, next) => {
     try {
         let arr = [];
 
-        console.log(req.body);
+        // console.log(req.body);
 
         if (req.body.type == 'true') {
             getNode(req.body.id);
-            console.log('true');
+            // console.log('true');
         } else {
-            console.log('false');
+            // console.log('false');
             if (req.body.id > 0) {
                 mycon.execute("SELECT sw_tree.parentId FROM sw_tree WHERE sw_tree.swTreeId= " + req.body.id, (e, r, f) => {
                     if (!e) {
-                        console.log(r);
+                        // console.log(r);
                         getNode(r[0].parentId);
                     }
                 })
@@ -689,9 +689,9 @@ exports.addToTree = (param, res, next) => {
                                     if (!er) {
                                         let treeId = ro.insertId;
 
-                                        console.log('---------');
-                                        console.log(treeId);
-                                        console.log('---------');
+                                        // console.log('---------');
+                                        // console.log(treeId);
+                                        // console.log('---------');
 
 
                                         mycon.execute("UPDATE `sw_invoice` SET `pin`='" + treeId + "' WHERE `idInvoice`= " + param.invoice, (ee, rr, ff) => {
@@ -805,9 +805,9 @@ exports.addOneToTree = (param, res, next) => {
                                     if (!er) {
                                         let treeId = ro.insertId;
 
-                                        console.log('---------');
-                                        console.log(treeId);
-                                        console.log('---------');
+                                        // console.log('---------');
+                                        // console.log(treeId);
+                                        // console.log('---------');
 
 
                                         mycon.execute("UPDATE `sw_invoice` SET `pin`='" + treeId + "' WHERE `idInvoice`= " + param.invoice, (ee, rr, ff) => {
@@ -869,7 +869,7 @@ exports.addOneToTree = (param, res, next) => {
 
 exports.addPoint = (param, res, next) => {
 
-    console.log(param);
+    // console.log(param);
 
     let invoiceID = param.invoice;
 
@@ -971,9 +971,9 @@ exports.addPoint = (param, res, next) => {
 exports.canAdd = (req, res, next) => {
     try {
         var param = req.body;
-        console.log('---------');
-        console.log(param);
-        console.log('---------');
+        // console.log('---------');
+        // console.log(param);
+        // console.log('---------');
         mycon.execute("SELECT sw_tree.swTreeId,sw_tree.parentId,sw_tree.A,sw_tree.B,sw_tree.userId,sw_tree.commitionId FROM sw_tree WHERE sw_tree.swTreeId=" + req.body.treeId,
             (er, ro, ne) => {
                 let ob = {
@@ -984,14 +984,14 @@ exports.canAdd = (req, res, next) => {
 
                 }
                 if (!er) {
-                    console.log('Data');
+                    // console.log('Data');
                     let r = ro[0];
                     if (r) {
                         ob.userId = r.userId;
                         ob.treeId = r.swTreeId;
 
                         if (r) {
-                            console.log('Data1');
+                            // console.log('Data1');
                             if (r.A && r.A > 0) {
 
                                 ob.sidA = false;
@@ -1016,7 +1016,7 @@ exports.canAdd = (req, res, next) => {
                         res.send(ob);
                     }
                 } else {
-                    console.log(er);
+                    // console.log(er);
                     ob.sidA = false;
                     ob.sidB = false;
                     res.send(ob);

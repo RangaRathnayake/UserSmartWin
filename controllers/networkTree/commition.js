@@ -35,14 +35,14 @@ exports.balancePoint = (req, res, next) => {
         mycon.execute("SELECT sw_tree.swTreeId,sw_tree.userId,sw_tree.commitionId FROM sw_tree WHERE sw_tree.swTreeId=" + req.body.tid,
             (error, rows, fildData) => {
                 if (!error) {
-                    console.log(rows);
+                    //  console.log(rows);
                     var data = rows[0];
-                    console.log(data.userId + " -- " + data.commitionId);
+                    //   console.log(data.userId + " -- " + data.commitionId);
                     mycon.execute("DELETE from sw_point WHERE treeid = '" + req.body.tid + "' and Side = '" + req.body.side + "'", (e, r, f) => {
                         if (!e) {
                             var point = req.body.point;
                             for (var x = 0; x < point; x++) {
-                                console.log(x);
+                                //        console.log(x);
                                 mycon.execute("INSERT INTO `sw_point` (  `userId`, `commitionId`, `invoiceId`, `Side`, `point`, `status`, `treeid` ) "
                                     + " VALUES	(  " + data.userId + ", " + data.commitionId + ", 1, '" + req.body.side + "', 1, 1, '" + req.body.tid + "' )",
                                     (ee, rr, ff) => {
@@ -136,7 +136,7 @@ exports.processA = (req, res, next, r) => {
 exports.processB = (req, res, next, d) => {
     try {
         if (d.ap > 0 && d.bp > 0) {
-            console.log(d.tid + "  -  " + d.ap + "  - " + d.bp + " --- " + d.proid + "-----" + d.uid);
+            //   console.log(d.tid + "  -  " + d.ap + "  - " + d.bp + " --- " + d.proid + "-----" + d.uid);
 
             let ca = d.ap; let cb = d.bp;
             let round = 0;
@@ -144,9 +144,9 @@ exports.processB = (req, res, next, d) => {
 
             for (var i = 1; i < 5; i++) {
                 round = i;
-                console.log(i);
+                //     console.log(i);
                 ca = ca - 1; cb = cb - 1;
-                console.log(ca + '  ' + cb);
+                //      console.log(ca + '  ' + cb);
 
                 if (ca == 0 && cb == 0) {
                     breakBy = 'AB';
@@ -163,7 +163,7 @@ exports.processB = (req, res, next, d) => {
 
             }
             let comition = 2 * round * 1000;
-            console.log('round ' + round + '   -  ' + comition);
+            //   console.log('round ' + round + '   -  ' + comition);
 
 
             let obj = {
@@ -203,19 +203,19 @@ exports.processC = (req, res, next, d) => {
         mycon.execute("INSERT INTO  `sw_pointcommition`(  `user_id`, `tree_id`, `commition_id`, `process_id`, `amount`, `status`)" +
             " VALUES (  '" + d.uid + "', '" + d.tid + "', '" + d.comid + "', '" + d.prosid + "', '" + d.amount + "', 1)", (ee, rr, ff) => {
                 if (!ee) {
-                    console.log(rr.insertId);
+                    //      console.log(rr.insertId);
                     let pintcom = rr.insertId;
-                    console.log("-------------------------------  " + d.comid);
+                    //     console.log("-------------------------------  " + d.comid);
                     mycon.execute("SELECT sw_commition.userId,sw_commition.introducerid,sw_commition.introducerCommitionId FROM sw_commition WHERE sw_commition.idCommition=" + d.comid, (eee, rrr, ff) => {
                         if (!eee) {
-                            console.log("++++++++++++++++++++++++++++++++++++++++++++++ " + rrr[0].introducerid);
+                            //          console.log("++++++++++++++++++++++++++++++++++++++++++++++ " + rrr[0].introducerid);
                             let introid = rrr[0].introducerid;
                             let introcom = rrr[0].introducerCommitionId;
                             let comiton = d.amount * 10 / 100;
                             mycon.execute("INSERT INTO `sw_introcommition`( `user_id`, `tree_id`, `process_id`, `commition_id`, `pointcom_id`, `amount`, `status`) "
                                 + " VALUES ( '" + introid + "', '" + d.tid + "', '" + d.prosid + "', '" + d.comid + "', '" + pintcom + "', '" + comiton + "', 1)", (e, r, f) => {
                                     if (!e) {
-                                        console.log(r);
+                                        //                      console.log(r);
                                         let obj = {
                                             tid: d.tid,
                                             pintcom: pintcom,
@@ -251,7 +251,7 @@ exports.processD = (req, res, next, d) => {
             round: d.round,
             pid: 0,
         }
-        console.log(obj);
+        //   console.log(obj);
 
         var BreakException = {};
 
@@ -274,7 +274,7 @@ exports.processD = (req, res, next, d) => {
                         }
                     });
                 } catch (er) {
-                    console.log('Brake A');
+                    //        console.log('Brake A');
                 }
             }
         });
@@ -297,7 +297,7 @@ exports.processD = (req, res, next, d) => {
                         }
                     });
                 } catch (er) {
-                    console.log('Brake B');
+                    //        console.log('Brake B');
                 }
             }
         })
@@ -312,7 +312,7 @@ exports.processE = (req, res, next, d) => {
     try {
         mycon.execute("UPDATE `sw_point` SET `status`= 2,`process_id`= '" + d.prosid + "',`pointcom_id`= '" + d.pintcom + "' WHERE `idPoint`=" + d.pid, (e, r, f) => {
             if (!e) {
-                console.log(r);
+                //            console.log(r);
             }
         });
     } catch (error) {
