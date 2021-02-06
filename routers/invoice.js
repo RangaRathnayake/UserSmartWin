@@ -9,6 +9,7 @@ router.post("/getAllInvoice", invoice.getAllInvoice);
 router.post("/getInvoicePayment", invoice.getInvoicePayment);
 router.post("/getTotPaid", invoice.getTotPaid);
 router.post("/newInvoice", invoice.newInvoice);
+router.post("/getInvoiceData", invoice.getInvoiceData);
 
 
 

@@ -348,6 +348,19 @@ exports.updateUserValues = (parm) => {
     });
 }
 
+
+exports.getUserData = (parm) => {
+    let q = "SELECT uservalue.keyId,uservalue.`value`,userkey.`key` FROM uservalue INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.userId='" + parm.id + "' ORDER BY userkey.keyOder ASC";
+    mycon.execute(q, (er, ro, fi) => {
+        if (!er) {
+            return;
+        } else {
+            console.log(er)
+            return;
+        }
+    });
+}
+
 // forgetPassword
 
 // verify

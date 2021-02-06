@@ -69,4 +69,18 @@ exports.newInvoice = (req, res, next) => {
 }
 
 
+exports.getInvoiceData = (req, res, next) => {
+    try {
+        mycon.execute("SELECT sw_invoice.idInvoice,sw_invoice.date,sw_invoice.userId,sw_invoice.totalValue,sw_invoice.productId,sw_invoice.pin,uservalue.keyId,uservalue.`value`,userkey.`key` FROM sw_invoice INNER JOIN uservalue ON uservalue.userId=sw_invoice.userId INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE sw_invoice.idInvoice=" + req.body.id +" ORDER BY userkey.keyOder ASC",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
 
