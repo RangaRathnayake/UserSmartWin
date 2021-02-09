@@ -26,4 +26,7 @@ router.post("/getAllUserType", userType.getAllUserType);
 //privilage
 router.post("/getPrivilagesByUserType", privilage.getPrivilagesByUserType);
 
+//Sms
+router.post("/singalMessage", user.singalMessage);
+
 module.exports = router;

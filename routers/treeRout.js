@@ -28,5 +28,9 @@ router.post("/process", commition.process);
 router.post("/getProcess", commition.getProcess);
 router.post("/getPointCommitonList", commition.getPointCommitonList);
 router.post("/getIntroCommitonList", commition.getIntroCommitonList);
+router.post("/getPointCommitonByUser", commition.getPointCommitonByUser);
+router.post("/getIntroCommitonByUser", commition.getIntroCommitonByUser);
+router.post("/getPointCommitonByUserDates", commition.getPointCommitonByUserDates);
+router.post("/getIntroCommitonByUserDates", commition.getIntroCommitonByUserDates);
 
 module.exports = router;

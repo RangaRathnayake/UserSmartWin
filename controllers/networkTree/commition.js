@@ -361,3 +361,68 @@ exports.getIntroCommitonList = (req, res, next) => {
     }
 }
 
+
+exports.getPointCommitonByUser = (req, res, next) => {
+    try {
+        mycon.execute("SELECT sw_pointcommition.idPointcomition,sw_pointcommition.user_id,sw_pointcommition.tree_id,sw_pointcommition.commition_id,sw_pointcommition.process_id,sw_pointcommition.amount,sw_pointcommition.`status`,GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_process.dateTime FROM sw_pointcommition INNER JOIN uservalue ON uservalue.userId=sw_pointcommition.user_id INNER JOIN sw_process ON sw_pointcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND sw_pointcommition.user_id='" + req.body.uid + "' GROUP BY sw_pointcommition.idPointcomition", (e, r, f) => {
+            if (!e) {
+                res.send(r);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.getIntroCommitonByUser = (req, res, next) => {
+    try {
+        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id,sw_process.dateTime FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id INNER JOIN sw_process ON sw_introcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND uservalue.userId='" + req.body.uid + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
+            if (!e) {
+                res.send(r);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.getPointCommitonByUserDates = (req, res, next) => {
+
+
+    var from = dateFormat(new Date(req.body.from), "yyyy-mm-dd");
+    var to = dateFormat(new Date(req.body.to), "yyyy-mm-dd");
+    // console.log(from + "  -  " + to);
+
+    try {
+        mycon.execute("SELECT sw_pointcommition.idPointcomition,sw_pointcommition.user_id,sw_pointcommition.tree_id,sw_pointcommition.commition_id,sw_pointcommition.process_id,sw_pointcommition.amount,sw_pointcommition.`status`,GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_process.dateTime FROM sw_pointcommition INNER JOIN uservalue ON uservalue.userId=sw_pointcommition.user_id INNER JOIN sw_process ON sw_pointcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND sw_pointcommition.user_id='" + req.body.uid + "'  AND sw_process.dateTime BETWEEN '" + from + "' AND '" + to + "'  GROUP BY sw_pointcommition.idPointcomition", (e, r, f) => {
+            if (!e) {
+                res.send(r);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.getIntroCommitonByUserDates = (req, res, next) => {
+    var from = dateFormat(new Date(req.body.from), "yyyy-mm-dd");
+    var to = dateFormat(new Date(req.body.to), "yyyy-mm-dd");
+    // console.log(from + "  -  " + to);
+    try {
+        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id,sw_process.dateTime FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id INNER JOIN sw_process ON sw_introcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND uservalue.userId='" + req.body.uid + "' AND sw_process.dateTime BETWEEN '" + from + "' AND '" + to + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
+            if (!e) {
+                res.send(r);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+

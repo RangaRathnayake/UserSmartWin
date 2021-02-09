@@ -361,6 +361,14 @@ exports.getUserData = (parm) => {
     });
 }
 
+exports.singalMessage = (req, res, next) => {
+
+    mg.smsSend(req.body);
+
+    res.send({ "sms": "ok" });
+}
+
+
 // forgetPassword
 
 // verify
