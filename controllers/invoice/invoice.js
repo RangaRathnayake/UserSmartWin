@@ -71,7 +71,7 @@ exports.newInvoice = (req, res, next) => {
 
 exports.getInvoiceData = (req, res, next) => {
     try {
-        mycon.execute("SELECT sw_invoice.idInvoice,sw_invoice.date,sw_invoice.userId,sw_invoice.totalValue,sw_invoice.productId,sw_invoice.pin,uservalue.keyId,uservalue.`value`,userkey.`key` FROM sw_invoice INNER JOIN uservalue ON uservalue.userId=sw_invoice.userId INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE sw_invoice.idInvoice=" + req.body.id +" ORDER BY userkey.keyOder ASC",
+        mycon.execute("SELECT sw_invoice.idInvoice,sw_invoice.date,sw_invoice.userId,sw_invoice.totalValue,sw_invoice.productId,sw_invoice.pin,uservalue.keyId,uservalue.`value`,userkey.`key` FROM sw_invoice INNER JOIN uservalue ON uservalue.userId=sw_invoice.userId INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE sw_invoice.idInvoice=" + req.body.id + " ORDER BY userkey.keyOder ASC",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -83,4 +83,20 @@ exports.getInvoiceData = (req, res, next) => {
     }
 }
 
+
+exports.getFullIncom = (req, res, next) => {
+    try {
+        var from = dateFormat(new Date(req.body.from), "yyyy-mm-dd");
+        var to = dateFormat(new Date(req.body.to), "yyyy-mm-dd");
+        mycon.execute("SELECT sw_invoice.idInvoice,sw_invoice.date,sw_invoice.userId,sw_invoice.totalValue,sw_invoice.productId,sw_invoice.pin,sw_invoice.cusid FROM sw_invoice WHERE sw_invoice.date BETWEEN '" + from + "' AND '" + to + "'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
 
