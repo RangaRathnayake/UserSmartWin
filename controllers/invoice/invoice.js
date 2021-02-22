@@ -88,12 +88,47 @@ exports.getFullIncom = (req, res, next) => {
     try {
         var from = dateFormat(new Date(req.body.from), "yyyy-mm-dd");
         var to = dateFormat(new Date(req.body.to), "yyyy-mm-dd");
-        mycon.execute("SELECT sw_invoice.idInvoice,sw_invoice.date,sw_invoice.userId,sw_invoice.totalValue,sw_invoice.productId,sw_invoice.pin,sw_invoice.cusid FROM sw_invoice WHERE sw_invoice.date BETWEEN '" + from + "' AND '" + to + "'",
+        mycon.execute("SELECT sw_invoice.idInvoice,sw_invoice.date,sw_invoice.userId,sw_invoice.totalValue,sw_invoice.productId,sw_invoice.pin,sw_invoice.cusid FROM sw_invoice WHERE sw_invoice.date BETWEEN '" + from + "' AND '" + to + "' ORDER BY sw_invoice.idInvoice DESC ",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
                 }
             });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.getPointExpenses = (req, res, next) => {
+    try {
+
+        var from = dateFormat(new Date(req.body.from), "yyyy-mm-dd");
+        var to = dateFormat(new Date(req.body.to), "yyyy-mm-dd");
+
+        mycon.execute("SELECT sw_pointcommition.idPointcomition,Sum(sw_pointcommition.amount) as amount,sw_process.dateTime,sw_process.idProcess FROM sw_pointcommition INNER JOIN sw_process ON sw_pointcommition.process_id=sw_process.idProcess WHERE sw_process.dateTime BETWEEN '" + from + "' AND '" + to + "' GROUP BY sw_process.idProcess ORDER BY sw_process.idProcess DESC", (e, r, f) => {
+            if (!e) {
+                res.send(r);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getCommitionExpenses = (req, res, next) => {
+    try {
+
+        var from = dateFormat(new Date(req.body.from), "yyyy-mm-dd");
+        var to = dateFormat(new Date(req.body.to), "yyyy-mm-dd");
+
+        mycon.execute("SELECT sw_introcommition.idIntrocommiton,Sum(sw_introcommition.amount) as amount,sw_process.dateTime,sw_process.idProcess FROM sw_introcommition INNER JOIN sw_process ON sw_introcommition.process_id=sw_process.idProcess WHERE sw_process.dateTime BETWEEN '" + from + "' AND '" + to + "' GROUP BY sw_process.idProcess ORDER BY sw_process.idProcess DESC", (e, r, f) => {
+            if (!e) {
+                res.send(r);
+            }
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send(error);

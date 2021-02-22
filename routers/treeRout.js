@@ -33,4 +33,5 @@ router.post("/getIntroCommitonByUser", commition.getIntroCommitonByUser);
 router.post("/getPointCommitonByUserDates", commition.getPointCommitonByUserDates);
 router.post("/getIntroCommitonByUserDates", commition.getIntroCommitonByUserDates);
 
+
 module.exports = router;
