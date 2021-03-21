@@ -3,6 +3,7 @@ const userController = require('../userControllers/user');
 const jwt = require('jsonwebtoken');
 const bcript = require('bcrypt');
 var dateFormat = require('dateformat');
+const { map } = require('mysql2/lib/constants/charset_encodings');
 
 
 exports.realEscapeString = (str) => {
@@ -38,7 +39,7 @@ exports.balancePoint = (req, res, next) => {
                     //  console.log(rows);
                     var data = rows[0];
                     //   console.log(data.userId + " -- " + data.commitionId);
-                    mycon.execute("DELETE from sw_point WHERE treeid = '" + req.body.tid + "' and Side = '" + req.body.side + "'", (e, r, f) => {
+                    mycon.execute("DELETE from sw_point WHERE treeid = '" + req.body.tid + "' and Side = '" + req.body.side + "' and status = 1", (e, r, f) => {
                         if (!e) {
                             var point = req.body.point;
                             for (var x = 0; x < point; x++) {
@@ -397,8 +398,10 @@ exports.getPointCommitonByUserDates = (req, res, next) => {
     var to = dateFormat(new Date(req.body.to), "yyyy-mm-dd");
     // console.log(from + "  -  " + to);
 
+    console.log(req.body.from + "   " + req.body.to);
+
     try {
-        mycon.execute("SELECT sw_pointcommition.idPointcomition,sw_pointcommition.user_id,sw_pointcommition.tree_id,sw_pointcommition.commition_id,sw_pointcommition.process_id,sw_pointcommition.amount,sw_pointcommition.`status`,GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_process.dateTime FROM sw_pointcommition INNER JOIN uservalue ON uservalue.userId=sw_pointcommition.user_id INNER JOIN sw_process ON sw_pointcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND sw_pointcommition.user_id='" + req.body.uid + "'  AND sw_process.dateTime BETWEEN '" + from + "' AND '" + to + "'  GROUP BY sw_pointcommition.idPointcomition", (e, r, f) => {
+        mycon.execute("SELECT sw_pointcommition.idPointcomition,sw_pointcommition.user_id,sw_pointcommition.tree_id,sw_pointcommition.commition_id,sw_pointcommition.process_id,sw_pointcommition.amount,sw_pointcommition.`status`,GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_process.dateTime FROM sw_pointcommition INNER JOIN uservalue ON uservalue.userId=sw_pointcommition.user_id INNER JOIN sw_process ON sw_pointcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND sw_pointcommition.user_id='" + req.body.uid + "'  AND sw_process.dateTime BETWEEN '" + req.body.from + "' AND '" + req.body.to + "'  GROUP BY sw_pointcommition.idPointcomition", (e, r, f) => {
             if (!e) {
                 res.send(r);
             }
@@ -415,9 +418,65 @@ exports.getIntroCommitonByUserDates = (req, res, next) => {
     var to = dateFormat(new Date(req.body.to), "yyyy-mm-dd");
     // console.log(from + "  -  " + to);
     try {
-        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id,sw_process.dateTime FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id INNER JOIN sw_process ON sw_introcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND uservalue.userId='" + req.body.uid + "' AND sw_process.dateTime BETWEEN '" + from + "' AND '" + to + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
+        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id,sw_process.dateTime FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id INNER JOIN sw_process ON sw_introcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND uservalue.userId='" + req.body.uid + "' AND sw_process.dateTime BETWEEN '" + req.body.from + "' AND '" + req.body.to + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
             if (!e) {
                 res.send(r);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.getPointCommitionById = (req, res, next) => {
+    let mm = new Map();
+    let arr = [];
+    try {
+        mycon.execute("SELECT swv1.idPoint,swv1.userId,swv1.treeid,swv1.Side,swv1.sum,swv1.changedate,swv1.voucher_id,swv1.process_id,swv1.pointcom_id,swv1.dateTime FROM swv1 WHERE swv1.dateTime BETWEEN '" + req.body.from + "' AND '" + req.body.to + "' AND swv1.treeid=" + req.body.tid, (e, r, f) => {
+            if (!e) {
+                let pid = 0;
+                let a = 0;
+                let b = 0;
+                r.forEach(el => {
+                    if (pid == el.process_id) {
+                        if (el.Side == 'A') {
+                            a = el.sum;
+                        }
+                        if (el.Side == 'B') {
+                            b = el.sum;
+                        }
+                        //  console.log(a + " - " + b + "   -- " + el.process_id);
+                        mm.set(el.process_id, { 'A': a, 'B': b, 'DateTime': el.dateTime, "pros": el.process_id, "val": 0 });
+                    } else {
+                        a = 0;
+                        b = 0;
+                        pid = el.process_id;
+                        if (el.Side == 'A') {
+                            a = el.sum;
+                        }
+                        if (el.Side == 'B') {
+                            b = el.sum;
+                        }
+                        mm.set(el.process_id, { 'A': a, 'B': b, 'DateTime': el.dateTime, "pros": el.process_id, "val": 0 });
+                    }
+                    //  console.log(el.process_id);
+                });
+                console.log(mm);
+                mm.forEach(el => {
+                    if (el.A >= 4 || el.B >= 4) {
+                        el.val = 8000;
+                    } else if (el.A < 4) {
+                        el.val = el.A * 2000;
+                    } else if (el.B < 4) {
+                        el.val = el.B * 2000;
+                    }
+                    arr.push(el);
+                    console.log(el);
+                });
+                const obj = Object.fromEntries(mm);
+                res.send(arr);
             }
         });
     } catch (error) {
