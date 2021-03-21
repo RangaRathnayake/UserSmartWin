@@ -434,7 +434,7 @@ exports.getPointCommitionById = (req, res, next) => {
     let mm = new Map();
     let arr = [];
     try {
-        mycon.execute("SELECT swv1.idPoint,swv1.userId,swv1.treeid,swv1.Side,swv1.sum,swv1.changedate,swv1.voucher_id,swv1.process_id,swv1.pointcom_id,swv1.dateTime FROM swv1 WHERE swv1.dateTime BETWEEN '" + req.body.from + "' AND '" + req.body.to + "' AND swv1.treeid=" + req.body.tid, (e, r, f) => {
+        mycon.execute("SELECT sw_point.idPoint AS idPoint,sw_point.userId AS userId,sw_point.treeid AS treeid,sw_point.Side AS Side,Sum(sw_point.point) AS sum,sw_point.changedate AS changedate,sw_point.voucher_id AS voucher_id,sw_point.process_id AS process_id,sw_point.pointcom_id AS pointcom_id,sw_process.dateTime AS dateTime FROM (sw_point JOIN sw_process ON (sw_process.idProcess=sw_point.process_id)) WHERE sw_point.`status`=2 AND sw_process.dateTime BETWEEN '" + req.body.from + "' AND '" + req.body.to + "' AND sw_point.treeid='" + req.body.tid + "' GROUP BY sw_point.treeid,sw_point.process_id,sw_point.Side ORDER BY process_id ASC,Side ASC,treeid ASC", (e, r, f) => {
             if (!e) {
                 let pid = 0;
                 let a = 0;
