@@ -6,7 +6,7 @@ var dateFormat = require('dateformat');
 //getProduct
 exports.getAllProduct = (req, res, next) => {
     try {
-        mycon.execute("SELECT sw_prod.idProd,sw_prod.prodName FROM sw_prod",
+        mycon.execute("SELECT sw_prod.idProd,sw_prod.prodName,sw_prod.prodImage,sw_prod.prodPrice,sw_prod.prodPoint,sw_prod.prodOther,sw_prod.prodStatus FROM sw_prod",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
