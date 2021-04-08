@@ -1100,6 +1100,22 @@ exports.getCurrentPoint = (req, res, next) => {
     }
 }
 
+exports.getAllPins = (req, res, next) => {
+    try {
+
+        mycon.execute("SELECT sw_tree.swTreeId,sw_tree.userId,sw_tree.other1,sw_tree.other2,uservalue.`value` FROM sw_tree INNER JOIN uservalue ON uservalue.userId=sw_tree.userId WHERE uservalue.keyId=2 AND sw_tree.`status`=1", (e, r, f) => {
+            if (!e) {
+                res.send(r);
+            }
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
 
 
 

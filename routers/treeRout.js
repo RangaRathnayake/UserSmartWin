@@ -20,6 +20,7 @@ router.post("/getNotActive", tree.getNotActive);
 router.post("/activeNode", tree.activeNode);
 router.post("/getDownTreeLimited", tree.getDownTreeLimited);
 router.post("/newPlacement", tree.newPlacement);
+router.post("/getAllPins", tree.getAllPins);
 
 
 // commition

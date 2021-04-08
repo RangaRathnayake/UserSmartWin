@@ -361,6 +361,18 @@ exports.getUserData = (parm) => {
     });
 }
 
+exports.getUserDataByPin = (req, res, next) => {
+    let q = "SELECT sw_tree.userId,userkey.idUserKey,userkey.`key`,userkey.keyStatus,userkey.keyOder,userkey.formId,userkey.type,uservalue.`value` FROM sw_tree INNER JOIN uservalue ON uservalue.userId=sw_tree.userId INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE sw_tree.swTreeId=" + req.body.tid;
+    mycon.execute(q, (er, ro, fi) => {
+        if (!er) {
+            res.send(ro);
+        } else {
+            console.log(er)
+            return;
+        }
+    });
+}
+
 exports.singalMessage = (req, res, next) => {
 
     mg.smsSend(req.body);
