@@ -19,6 +19,7 @@ router.post("/sendLoginInformation", user.sendLoginInformation);
 router.post("/createPassword", user.createPassword);
 router.post("/getUserData", user.getUserData);
 router.post("/getUserDataByPin", user.getUserDataByPin);
+router.post("/getValue", user.getValue);
 
 //userType
 router.post("/getAllUserType", userType.getAllUserType);

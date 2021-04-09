@@ -381,6 +381,20 @@ exports.singalMessage = (req, res, next) => {
 }
 
 
+exports.getValue = (req, res, next) => {
+    try {
+        mycon.execute("SELECT keyval.id,keyval.`key`,keyval.`value` FROM keyval WHERE keyval.`key`='" + req.body.key + "'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
 // forgetPassword
 
 // verify
