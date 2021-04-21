@@ -13,6 +13,7 @@ router.post("/sendMassage", prod.sendMassage);
 router.post("/getAllSent", prod.getAllSent);
 router.post("/getAllNotificationsByUserID", prod.getAllNotificationsByUserID);
 router.post("/sendMassagePending", prod.sendMassagePending);
+router.post("/changeProductOnInvoice", prod.changeProductOnInvoice);
 
 
 

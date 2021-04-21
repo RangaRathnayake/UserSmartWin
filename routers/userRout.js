@@ -31,4 +31,6 @@ router.post("/getPrivilagesByUserType", privilage.getPrivilagesByUserType);
 //Sms
 router.post("/singalMessage", user.singalMessage);
 
+router.post("/sendBulkSms", user.sendBulkSms);
+
 module.exports = router;

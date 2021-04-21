@@ -164,3 +164,19 @@ exports.sendMassagePending = (req, res, next) => {
         res.status(500).send(error);
     }
 }
+
+exports.changeProductOnInvoice = (req, res, next) => {
+    try {
+        mycon.execute("UPDATE `sw_invoice` SET `productId`='" + req.body.pid + "',`comment`='" + req.body.comment + "' WHERE `pin`= '" + req.body.tid + "'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}

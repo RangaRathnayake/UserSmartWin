@@ -395,6 +395,50 @@ exports.getValue = (req, res, next) => {
     }
 }
 
+
+exports.sendBulkSms = (req, res, next) => {
+    try {
+        mycon.execute("SELECT uservalue.userId,uservalue.`value`,userkey.`key` FROM uservalue INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.keyId=9 AND uservalue.`value` IS NOT NULL",
+            (error, rows, fildData) => {
+                if (!error) {
+
+                    let arr = [];
+
+                    rows.forEach(element => {
+                        let mobile = element.value;
+                        if (mobile.length == 10) {
+                            arr.push(mobile);
+                        }
+                    });
+
+                    function go() {
+                        var to = arr.pop();
+                        console.log(to);
+
+                        var mgg = "Sinhala Hindu aluth aurudu udawen pasu ayathanaye weda aramba kirima saha ganu denu kirima 2021-04-18 dina udesana 8.30 ta karyalayedi pewethwe. a sandaha sahabagiwana lesa obata aradana..  From Smart Win Entrepreneur (pvt) Ltd"
+
+                        let param = { message: mgg, mob: to }
+
+                        mg.smsSend(param);
+
+                        setTimeout(() => { go(); }, 2000);
+                    }
+
+
+                    setTimeout(() => {
+                        go();
+                        console.log(arr);
+                        res.send(arr);
+                    }, 500);
+
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
 // forgetPassword
 
 // verify
