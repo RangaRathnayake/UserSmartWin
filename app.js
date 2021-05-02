@@ -92,34 +92,34 @@ app.use((error, req, res, next) => {
 var x = 0;
 
 function time() {
-    setTimeout(() => {
-        try {
-            let us = new Date().toLocaleString('en-US', { timeZone: 'Asia/Colombo' });
-            console.log(us);
-            let current = dateFormat(us, "yyyy-mm-dd");
-            console.log(current);
-            mycon.execute("SELECT sw_process.idProcess,sw_process.dateTime FROM sw_process ORDER BY sw_process.idProcess DESC LIMIT 1", (e, r, f) => {
-                let last = r[0].dateTime;
-                last = new Date(last);
-                last = dateFormat(last, "yyyy-mm-dd");
-                if (last < current) {
-                    http.get("https://api.smartwin.lk/tree/process"
-                        , function (err, res, body) {
-                            if (err) {
-                                console.log(err);
-                            }
-                        }
-                    );
-                    console.log("RUN");
-                } else {
-                    console.log("NOT RUN");
-                }
-            })
-        } catch (error) {
-            console.log(error);
-        }
-        time();
-    }, 180000);
+    // setTimeout(() => {
+    //     try {
+    //         let us = new Date().toLocaleString('en-US', { timeZone: 'Asia/Colombo' });
+    //         console.log(us);
+    //         let current = dateFormat(us, "yyyy-mm-dd");
+    //         console.log(current);
+    //         mycon.execute("SELECT sw_process.idProcess,sw_process.dateTime FROM sw_process ORDER BY sw_process.idProcess DESC LIMIT 1", (e, r, f) => {
+    //             let last = r[0].dateTime;
+    //             last = new Date(last);
+    //             last = dateFormat(last, "yyyy-mm-dd");
+    //             if (last < current) {
+    //                 http.get("https://api.smartwin.lk/tree/process"
+    //                     , function (err, res, body) {
+    //                         if (err) {
+    //                             console.log(err);
+    //                         }
+    //                     }
+    //                 );
+    //                 console.log("RUN");
+    //             } else {
+    //                 console.log("NOT RUN");
+    //             }
+    //         })
+    //     } catch (error) {
+    //         console.log(error);
+    //     }
+    //     time();
+    //  }, 180000);
 }
 
 time();
