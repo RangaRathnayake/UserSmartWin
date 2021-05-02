@@ -4,7 +4,9 @@ const port = process.env.PORT || 3000;
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-
+const mycon = require('./util/conn');
+var dateFormat = require('dateformat');
+const http = require('http');
 const cors = require('cors');
 const app = express();
 
@@ -87,5 +89,42 @@ app.use((error, req, res, next) => {
     })
 });
 
+var x = 0;
+
+function time() {
+    setTimeout(() => {
+        try {
+            let us = new Date().toLocaleString('en-US', { timeZone: 'Asia/Colombo' });
+            console.log(us);
+            let current = dateFormat(us, "yyyy-mm-dd");
+            console.log(current);
+            mycon.execute("SELECT sw_process.idProcess,sw_process.dateTime FROM sw_process ORDER BY sw_process.idProcess DESC LIMIT 1", (e, r, f) => {
+                let last = r[0].dateTime;
+                last = new Date(last);
+                last = dateFormat(last, "yyyy-mm-dd");
+                if (last < current) {
+                    http.get("http://localhost:3000/tree/process"
+                        , function (err, res, body) {
+                            if (err) {
+                                console.log(err);
+                            }
+                        }
+                    );
+                    console.log("RUN");
+                } else {
+                    console.log("NOT RUN");
+                }
+            })
+        } catch (error) {
+            console.log(error);
+        }
+        time();
+    }, 120000);
+}
+
+time();
 
 app.listen(port);
+
+
+
