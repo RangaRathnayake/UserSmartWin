@@ -103,7 +103,7 @@ function time() {
                 last = new Date(last);
                 last = dateFormat(last, "yyyy-mm-dd");
                 if (last < current) {
-                    http.get("http://localhost:3000/tree/process"
+                    http.get("https://api.smartwin.lk/tree/process"
                         , function (err, res, body) {
                             if (err) {
                                 console.log(err);
@@ -119,7 +119,7 @@ function time() {
             console.log(error);
         }
         time();
-    }, 120000);
+    }, 180000);
 }
 
 time();
