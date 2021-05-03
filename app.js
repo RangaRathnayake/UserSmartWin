@@ -1,5 +1,5 @@
 const express = require('express');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -9,13 +9,14 @@ var dateFormat = require('dateformat');
 const http = require('http');
 const cors = require('cors');
 const app = express();
-
+const axios = require('axios')
 
 const indexRouter = require('./routers/index');
 const usersRout = require('./routers/userRout');
 const treeRout = require('./routers/treeRout');
 const prodRout = require('./routers/prodRout');
 const invoiceRout = require('./routers/invoice');
+
 
 
 const allowedOrigins = [
@@ -103,13 +104,28 @@ function time() {
                 last = new Date(last);
                 last = dateFormat(last, "yyyy-mm-dd");
                 // if (last < current) {
-                http.get("https://apitesting.tradexzone.com/tree/process"
-                    , function (err, res, body) {
-                        if (err) {
-                            console.log(err);
-                        }
-                    }
-                );
+
+
+                let send = {}
+
+                axios.post('http://apitesting.tradexzone.com/tree/process', send)
+                    .then(res => {
+                        console.log(`statusCode: ${res[0]}`)
+                        // console.log(res)  
+                    })
+                    .catch(error => {
+                        console.error(error)
+                    })
+
+
+
+                // http.get("http://apitesting.tradexzone.com/tree/process"
+                //     , function (err, res, body) {
+                //         if (err) {
+                //             console.log(err);
+                //         }
+                //     }
+                // );
                 console.log("RUN");
                 // } else {
                 //     console.log("NOT RUN");
@@ -119,7 +135,7 @@ function time() {
             console.log(error);
         }
         time();
-    }, 600000);
+    }, 10000);
 }
 
 time();

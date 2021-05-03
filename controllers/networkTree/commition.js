@@ -87,7 +87,7 @@ exports.processA = (req, res, next, r) => {
     try {
         let x = 0;
 
-        var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+        var day = dateFormat(new Date().toLocaleString('en-US', { timeZone: 'Asia/Colombo' }), "yyyy-mm-dd h:MM:ss");
 
         mycon.execute("INSERT INTO `sw_process`(`dateTime`) VALUES ('" + day + "')", (er, ro, fi) => {
             if (!er) {
