@@ -1,5 +1,5 @@
 const express = require('express');
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -110,14 +110,14 @@ function time() {
 
                 let send = {}
 
-                axios.post('http://apitesting.tradexzone.com/tree/process', send)
-                    .then(res => {
-                        console.log(`statusCode: ${res[0]}`)
-                        // console.log(res)  
-                    })
-                    .catch(error => {
-                        console.error(error)
-                    })
+                // axios.post('http://apitesting.tradexzone.com/tree/process', send)
+                //     .then(res => {
+                //         console.log(`statusCode: ${res[0]}`)
+                //         // console.log(res)  
+                //     })
+                //     .catch(error => {
+                //         console.error(error)
+                //     })
 
 
 
@@ -140,7 +140,7 @@ function time() {
     }, 10000);
 }
 
-time();
+// time();
 
 app.listen(port);
 

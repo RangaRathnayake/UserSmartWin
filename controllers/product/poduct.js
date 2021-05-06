@@ -65,6 +65,82 @@ exports.getMassagesForSend = (req, res, next) => {
 }
 
 
+
+exports.firstMessageBulk = (req, res, next) => {
+    try {
+        let query = "SELECT sw_tree.swTreeId,sw_tree.userId,sw_tree.other2,sw_invoice.pin,sw_invoice.productId FROM sw_tree INNER JOIN sw_invoice ON sw_invoice.pin=sw_tree.swTreeId WHERE sw_tree.other2=0 AND sw_tree.`status`=1 ORDER BY sw_tree.userId ASC"
+        mycon.execute(query, (e, r, f) => {
+            if (!e) {
+                this.bulsSendingMethod(JSON.stringify(r));
+                res.send({ "ok": "ok" });
+            }
+        });
+
+    } catch (error) {
+        console.log(error)
+    }
+}
+
+
+exports.bulsSendingMethod = (data) => {
+
+    let list = JSON.parse(data);
+    let lenth = list.length;
+    let x = 0;
+
+    let userid;
+
+    function recall() {
+        x++;
+        let row = list[x]
+
+        var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+
+        let mg = "Oba wisin aththikaram mudal gewa anawum kala bandaye ithiri mudal gewa nidahaskaraganna dinayak danumdenna. From : Smart Win Entrepreneur (Pvt) Ltd 0372234777"
+
+        mycon.execute("INSERT INTO `sw_prod_issuing` (`user_id`,`tid_id`,`prod_id`,`date`,`comment`,`status`,`status_text`) " +
+            " VALUES ('" + row.userId + "','" + row.swTreeId + "','" + row.productId + "','" + day + "','" + mg + "','1','first')",
+            (error, rows, fildData) => {
+                if (userid != row.userId) {
+                    mycon.execute("SELECT uservalue.`value`,userkey.`key` FROM uservalue INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.userId= '" + row.userId + "' AND (uservalue.keyId=22 OR uservalue.keyId=9) ORDER BY userkey.keyOder ASC", (e, r, f) => {
+                        if (!e) {
+                            console.log(r[0].value + "   " + r[1].value)
+                            mg.emailSend({
+                                to: r[1].value,
+                                subject: 'Smart Win Entrepreneur',
+                                message: mg
+                            });
+                            mg.smsSend({ mob: r[0].value, message: mg });
+                        } else {
+                            console.log(e);
+                        }
+                    });
+                    userid = row.userId;
+                    console.log(lenth + "   " + x + "     " + userid);
+                }
+            }
+        );
+
+        console.log();
+
+
+        if (x < lenth) {
+            setTimeout(() => { recall(); }, 2000)
+
+        }
+    }
+
+    recall();
+
+
+
+}
+
+
+
+
+
+
 exports.sendMassage = (req, res, next) => {
     try {
         var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
@@ -74,20 +150,28 @@ exports.sendMassage = (req, res, next) => {
                 if (!error) {
                     res.send(rows);
 
+
+                    // if (userid != req.body.uid) {
+
                     mycon.execute("SELECT uservalue.`value`,userkey.`key` FROM uservalue INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.userId= '" + req.body.uid + "' AND (uservalue.keyId=22 OR uservalue.keyId=9) ORDER BY userkey.keyOder ASC", (e, r, f) => {
                         if (!e) {
+                            userid = req.body.uid;
 
                             mg.emailSend({
                                 to: r[1].value,
                                 subject: 'Smart Win Entrepreneur',
                                 message: req.body.msg
                             });
+
                             mg.smsSend({ mob: r[0].value, message: req.body.msg });
 
                         } else {
                             console.log(e);
                         }
                     });
+                    // }
+
+
                 } else {
                     console.log(error);
                 }

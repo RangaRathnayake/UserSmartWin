@@ -220,7 +220,7 @@ exports.sendLoginInformation = (uid) => {
                     }
                 });
 
-                var val = Math.floor(1000 + Math.random() * 9000);
+                var val = Math.floor(100000 + Math.random() * 900000);
                 mycon.execute("UPDATE `user` SET `authcode`='" + val + "' WHERE `idUser`=" + uid, (er, ro, fi) => {
                     if (!er) {
                         console.log(ro);

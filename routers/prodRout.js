@@ -15,6 +15,7 @@ router.post("/getAllNotificationsByUserID", prod.getAllNotificationsByUserID);
 router.post("/sendMassagePending", prod.sendMassagePending);
 router.post("/changeProductOnInvoice", prod.changeProductOnInvoice);
 
+router.post("/firstMessageBulk", prod.firstMessageBulk);
 
 
 module.exports = router;
