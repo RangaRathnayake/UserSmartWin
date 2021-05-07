@@ -77,7 +77,7 @@ exports.getMassagesForSend = (req, res, next) => {
 exports.firstMessageBulk = (req, res, next) => {
     try {
         let query =
-            "SELECT sw_tree.swTreeId,sw_tree.userId,sw_tree.other2,sw_invoice.pin,sw_invoice.productId FROM sw_tree INNER JOIN sw_invoice ON sw_invoice.pin=sw_tree.swTreeId WHERE sw_tree.other2=0 AND sw_tree.`status`=1 ORDER BY sw_tree.userId ASC";
+            "SELECT sw_tree.swTreeId,sw_tree.userId,sw_tree.other2,sw_invoice.pin,sw_invoice.productId FROM sw_tree INNER JOIN sw_invoice ON sw_invoice.pin=sw_tree.swTreeId WHERE sw_tree.other2=0 AND sw_tree.`status`=1 AND sw_tree.userId> 131 ORDER BY sw_tree.userId ASC";
         mycon.execute(query, (e, r, f) => {
             if (!e) {
                 this.bulsSendingMethod(JSON.stringify(r));
@@ -127,12 +127,12 @@ exports.bulsSendingMethod = (data) => {
                         (e, r, f) => {
                             if (!e) {
                                 console.log(r[0].value + "   " + r[1].value);
-                                mg.emailSend({
-                                    to: r[1].value,
-                                    subject: "Smart Win Entrepreneur",
-                                    message: msg,
-                                });
-                                mg.smsSend({ mob: r[0].value, message: msg });
+                                // mg.emailSend({
+                                //     to: r[1].value,
+                                //     subject: "Smart Win Entrepreneur",
+                                //     message: msg,
+                                // });
+                                //  mg.smsSend({ mob: r[0].value, message: msg });
                             } else {
                                 console.log(e);
                             }
