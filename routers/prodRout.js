@@ -17,5 +17,6 @@ router.post("/changeProductOnInvoice", prod.changeProductOnInvoice);
 
 router.post("/firstMessageBulk", prod.firstMessageBulk);
 
+router.post("/block", prod.block);
 
 module.exports = router;

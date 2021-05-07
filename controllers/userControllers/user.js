@@ -49,6 +49,21 @@ exports.getAllUsers = (req, res, next) => {
     }
 }
 
+
+exports.getUserType = (req, res, next) => {
+    try {
+        mycon.execute("SELECT `user`.utypeId FROM `user` WHERE `user`.idUser=" + req.body.uid,
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
 // userLogin
 exports.userLogin = (req, res, next) => {
     try {
@@ -64,6 +79,7 @@ exports.userLogin = (req, res, next) => {
                             return res.status(401).json({ message: 'user name or password is wrong' });
                         } else {
                             if (result) {
+                                
                                 const token = jwt.sign({
                                     uid: user.idUser,
                                     email: user.email,
@@ -438,6 +454,15 @@ exports.sendBulkSms = (req, res, next) => {
         res.status(500).send(error);
     }
 }
+
+
+
+
+
+
+
+
+
 
 // forgetPassword
 

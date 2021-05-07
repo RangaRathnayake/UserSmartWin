@@ -11,6 +11,7 @@ router.post("/getUsersList", user.getUsersList);
 router.post("/update", user.update);
 router.post("/signUp", user.signUp);
 router.post("/userLogin", user.userLogin);
+router.post("/getUserType", user.getUserType);
 router.post("/getUserKeys", user.getUserKeys);
 router.post("/saveNewUser", user.saveNewUser);
 router.post("/getAllUsers", user.getAllUsers);
@@ -20,6 +21,11 @@ router.post("/createPassword", user.createPassword);
 router.post("/getUserData", user.getUserData);
 router.post("/getUserDataByPin", user.getUserDataByPin);
 router.post("/getValue", user.getValue);
+
+
+// router.post("/blockUser", user.blockUser);
+// router.post("/unBlockUser", user.unBlockUser);
+
 
 //userType
 router.post("/getAllUserType", userType.getAllUserType);
