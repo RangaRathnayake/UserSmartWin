@@ -75,6 +75,7 @@ exports.getMassagesForSend = (req, res, next) => {
 };
 
 exports.firstMessageBulk = (req, res, next) => {
+    console.log("Start")
     try {
         let query =
             "SELECT sw_tree.swTreeId,sw_tree.userId,sw_tree.other2,sw_invoice.pin,sw_invoice.productId FROM sw_tree INNER JOIN sw_invoice ON sw_invoice.pin=sw_tree.swTreeId WHERE sw_tree.other2=0 AND sw_tree.`status`=1 AND sw_tree.userId> 131 ORDER BY sw_tree.userId ASC";
