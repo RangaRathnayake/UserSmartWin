@@ -342,7 +342,15 @@ exports.unBlockUser = (req, res, next, data) => {
                 if (!error) {
                     if (rows.length == 0) {
                         if (req.body.uid != 1) {
-                            this.unBlockKnow(req, res, next, { uid: data.uid });
+                            mycon.execute("UPDATE `user` SET `utypeId`=3 WHERE `idUser`=" + data.uid,
+                                (error, rows, fildData) => {
+                                    if (!error) {
+                                        console.log(rows);
+                                    } else {
+                                        console.log(error);
+                                    }
+                                }
+                            );
                         }
                     } else {
                         let length = rows.length;
