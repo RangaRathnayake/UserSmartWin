@@ -365,18 +365,19 @@ exports.unBlockUser = (req, res, next, data) => {
                             mycon.execute("SELECT sw_prod_issuing.idProd,sw_prod_issuing.user_id,sw_prod_issuing.tid_id,sw_prod_issuing.prod_id,sw_prod_issuing.date,sw_prod_issuing.`comment`,sw_prod_issuing.`status`,sw_prod_issuing.status_text FROM sw_prod_issuing WHERE sw_prod_issuing.tid_id='" + tid + "' ORDER BY sw_prod_issuing.idProd DESC LIMIT 1", (er, ro, fi) => {
                                 if (!er) {
                                     //  console.log(ro[0].status);
-
-                                    if (ro[0] && ro[0].status == 2) {
-                                        day = new Date();
-                                        console.log(day + "                  " + ro[0].date);
-                                        if (new Date() < ro[0].date) {
-                                            console.log("OK")
-                                            canUnblock = true;
+                                    if (ro[0]) {
+                                        if (ro[0].status == 2) {
+                                            day = new Date();
+                                            console.log(day + "                  " + ro[0].date);
+                                            if (new Date() < ro[0].date) {
+                                                console.log("OK")
+                                                canUnblock = true;
+                                            } else {
+                                                console.log("Block Again and send message");
+                                            }
                                         } else {
-                                            console.log("Block Again and send message");
+                                            canUnblock = false;
                                         }
-                                    } else {
-                                        canUnblock = false;
                                     }
                                 }
                             });
@@ -384,7 +385,7 @@ exports.unBlockUser = (req, res, next, data) => {
                             if (x < length) {
                                 setTimeout(() => {
                                     recall();
-                                }, 1000);
+                                }, 20);
                             } else {
                                 console.log("finish ---------------- ");
                                 if (canUnblock) {
