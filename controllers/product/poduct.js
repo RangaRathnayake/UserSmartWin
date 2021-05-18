@@ -78,7 +78,7 @@ exports.firstMessageBulk = (req, res, next) => {
     console.log("Start")
     try {
         let query =
-            "SELECT sw_tree.swTreeId,sw_tree.userId,sw_tree.other2,sw_invoice.pin,sw_invoice.productId FROM sw_tree INNER JOIN sw_invoice ON sw_invoice.pin=sw_tree.swTreeId WHERE sw_tree.other2=0 AND sw_tree.`status`=1 AND sw_tree.userId> 131 ORDER BY sw_tree.userId ASC";
+            "SELECT sw_tree.swTreeId,sw_tree.userId,sw_tree.other2,sw_invoice.pin,sw_invoice.productId FROM sw_tree INNER JOIN sw_invoice ON sw_invoice.pin=sw_tree.swTreeId WHERE sw_tree.other2=0 AND sw_tree.`status`=1 AND sw_tree.userId> 208 ORDER BY sw_tree.userId ASC";
         mycon.execute(query, (e, r, f) => {
             if (!e) {
                 this.bulsSendingMethod(JSON.stringify(r));
@@ -150,7 +150,7 @@ exports.bulsSendingMethod = (data) => {
         if (x < lenth) {
             setTimeout(() => {
                 recall();
-            }, 2000);
+            }, 100);
         }
     }
 
@@ -365,7 +365,8 @@ exports.unBlockUser = (req, res, next, data) => {
                             mycon.execute("SELECT sw_prod_issuing.idProd,sw_prod_issuing.user_id,sw_prod_issuing.tid_id,sw_prod_issuing.prod_id,sw_prod_issuing.date,sw_prod_issuing.`comment`,sw_prod_issuing.`status`,sw_prod_issuing.status_text FROM sw_prod_issuing WHERE sw_prod_issuing.tid_id='" + tid + "' ORDER BY sw_prod_issuing.idProd DESC LIMIT 1", (er, ro, fi) => {
                                 if (!er) {
                                     //  console.log(ro[0].status);
-                                    if (ro[0].status == 2) {
+
+                                    if (ro[0] && ro[0].status == 2) {
                                         day = new Date();
                                         console.log(day + "                  " + ro[0].date);
                                         if (new Date() < ro[0].date) {
@@ -383,7 +384,7 @@ exports.unBlockUser = (req, res, next, data) => {
                             if (x < length) {
                                 setTimeout(() => {
                                     recall();
-                                }, 20);
+                                }, 1000);
                             } else {
                                 console.log("finish ---------------- ");
                                 if (canUnblock) {
