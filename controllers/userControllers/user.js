@@ -79,7 +79,7 @@ exports.userLogin = (req, res, next) => {
                             return res.status(401).json({ message: 'user name or password is wrong' });
                         } else {
                             if (result) {
-                                
+
                                 const token = jwt.sign({
                                     uid: user.idUser,
                                     email: user.email,
@@ -271,8 +271,9 @@ exports.sendLoginInformation = (uid) => {
 
 exports.createPassword = (req, res, next) => {
     let b = req.body;
+    console.log(b);
     try {
-        mycon.execute("SELECT `user`.email,`user`.pword,`user`.mobileno,`user`.authcode,`user`.idUser,`user`.`status`,`user`.dateTime,`user`.utypeId FROM `user` WHERE `user`.idUser='" + b.uid + "' AND `user`.authcode='" + b.code + "'", (e, r, f) => {
+        mycon.execute("SELECT `user`.email,`user`.pword,`user`.mobileno,`user`.authcode,`user`.idUser,`user`.`status`,`user`.dateTime,`user`.utypeId FROM `user` WHERE `user`.idUser=" + b.uid, (e, r, f) => {
             if (!e) {
                 if (r[0] && r[0].idUser > 0) {
 
@@ -292,6 +293,8 @@ exports.createPassword = (req, res, next) => {
                 } else {
                     res.send({ mg: "Vreification Code is Wrong" });
                 }
+            } else {
+                console.log(e);
             }
         });
     } catch (error) {
@@ -379,6 +382,18 @@ exports.getUserData = (parm) => {
 
 exports.getUserDataByPin = (req, res, next) => {
     let q = "SELECT sw_tree.userId,userkey.idUserKey,userkey.`key`,userkey.keyStatus,userkey.keyOder,userkey.formId,userkey.type,uservalue.`value` FROM sw_tree INNER JOIN uservalue ON uservalue.userId=sw_tree.userId INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE sw_tree.swTreeId=" + req.body.tid;
+    mycon.execute(q, (er, ro, fi) => {
+        if (!er) {
+            res.send(ro);
+        } else {
+            console.log(er)
+            return;
+        }
+    });
+}
+
+exports.getPinsById = (req, res, next) => {
+    let q = "SELECT sw_tree.swTreeId as `key`, sw_tree.swTreeId as `value` FROM sw_tree WHERE sw_tree.userId=" + req.body.uid;
     mycon.execute(q, (er, ro, fi) => {
         if (!er) {
             res.send(ro);
