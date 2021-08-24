@@ -473,7 +473,7 @@ exports.getPointCommitionById = (req, res, next) => {
                         el.val = el.B * 2000;
                     }
                     arr.push(el);
-                    console.log(el);
+                   // console.log(el);
                 });
                 const obj = Object.fromEntries(mm);
                 res.send(arr);

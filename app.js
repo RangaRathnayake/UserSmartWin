@@ -16,6 +16,7 @@ const usersRout = require('./routers/userRout');
 const treeRout = require('./routers/treeRout');
 const prodRout = require('./routers/prodRout');
 const invoiceRout = require('./routers/invoice');
+const uploadRout = require('./routers/upload');
 
 
 
@@ -32,9 +33,7 @@ const allowedOrigins = [
     'http://localhost:8080',
     'http://localhost:8100',
     'https://api.smartwin.lk',
-    'http://api.smartwin.lk',
-    'http://apitesting.tradexzone.com',
-    'https://apitesting.tradexzone.com'
+    'http://api.smartwin.lk'
 
 ];
 
@@ -67,7 +66,7 @@ app.use('/prod', prodRout);
 
 app.use('/invoice', invoiceRout);
 
-
+app.use('/up', uploadRout);
 
 app.use((req, res, next) => {
     const error = new Error('Not Found');

@@ -37,4 +37,8 @@ router.post("/getIntroCommitonByUserDates", commition.getIntroCommitonByUserDate
 router.post("/getPointCommitionById", commition.getPointCommitionById);
 
 
+router.post("/addManualPoints", tree.addManualPoints);
+
+
+
 module.exports = router;

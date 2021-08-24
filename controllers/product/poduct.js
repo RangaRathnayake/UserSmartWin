@@ -4,6 +4,34 @@ const bcript = require("bcrypt");
 var dateFormat = require("dateformat");
 const mg = require("../../middleware/email");
 
+
+
+exports.realEscapeString = (str) => {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+            case "%":
+                return "\\" + char; // prepends a backslash to backslash, percent,
+            // and double/single quotes
+        }
+    });
+}
+
+
 //getProduct
 exports.getAllProduct = (req, res, next) => {
     try {
@@ -78,7 +106,7 @@ exports.firstMessageBulk = (req, res, next) => {
     console.log("Start")
     try {
         let query =
-            "SELECT sw_tree.swTreeId,sw_tree.userId,sw_tree.other2,sw_invoice.pin,sw_invoice.productId FROM sw_tree INNER JOIN sw_invoice ON sw_invoice.pin=sw_tree.swTreeId WHERE sw_tree.other2=0 AND sw_tree.`status`=1 AND sw_tree.userId> 208 ORDER BY sw_tree.userId ASC";
+            "SELECT sw_tree.swTreeId,sw_tree.userId,sw_tree.other2,sw_invoice.pin,sw_invoice.productId FROM sw_tree INNER JOIN sw_invoice ON sw_invoice.pin=sw_tree.swTreeId WHERE sw_tree.other2=0 AND sw_tree.`status`=1 AND sw_tree.userId> 637 ORDER BY sw_tree.userId ASC";
         mycon.execute(query, (e, r, f) => {
             if (!e) {
                 this.bulsSendingMethod(JSON.stringify(r));
@@ -133,7 +161,7 @@ exports.bulsSendingMethod = (data) => {
                                 //     subject: "Smart Win Entrepreneur",
                                 //     message: msg,
                                 // });
-                                //  mg.smsSend({ mob: r[0].value, message: msg });
+                                mg.smsSend({ mob: r[0].value, message: msg });
                             } else {
                                 console.log(e);
                             }
@@ -150,7 +178,7 @@ exports.bulsSendingMethod = (data) => {
         if (x < lenth) {
             setTimeout(() => {
                 recall();
-            }, 100);
+            }, 2000);
         }
     }
 
@@ -508,6 +536,88 @@ exports.blockUser = (req, res, next, data) => {
     }
 };
 
+// ==========================================================================
+
+exports.addProduct = (req, res, next) => {
+    try {
+        mycon.execute(
+            "INSERT INTO  `sw_prod`(  `prodName`,  `prodPrice`, `prodPoint`, `prodOther`, `prodStatus`, `description`, `link`, `cat`) VALUES (  '" + this.realEscapeString(req.body.pname) + "',  " + req.body.pprice + ", 1, NULL, 1, '" + this.realEscapeString(req.body.pdescription) + "', '" + req.body.plink + "', '" + req.body.pcat + "')",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
+
+exports.updateProduct = (req, res, next) => {
+    try {
+        mycon.execute(
+            "UPDATE  `sw_prod` SET `prodName`='" + this.realEscapeString(req.body.pname) + "', `prodPrice`=" + req.body.pprice + ", `prodOther`=NULL, `description`='" + this.realEscapeString(req.body.pdescription) + "', `link`='" + req.body.plink + "', `cat`='" + req.body.pcat + "' WHERE `idProd`=" + req.body.pid,
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
 
 
+exports.addProdCat = (req, res, next) => {
+    try {
+        mycon.execute(
+            "INSERT INTO  `sw_prod_cat`(  `cat_name`, `description`, `status`) VALUES (  '" + this.realEscapeString(req.body.cat_name) + "', '" + req.body.cdescription + "', 1)",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
+
+exports.updateProdCat = (req, res, next) => {
+    try {
+        mycon.execute(
+            "UPDATE  `sw_prod_cat` SET `cat_name` = '" + this.realEscapeString(req.body.cat_name) + "', `description` = '" + req.body.cdescription + "'  WHERE `idCat` = '" + req.body.idCat + "'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
+
+exports.getProdCat = (req, res, next) => {
+    try {
+        mycon.execute(
+            "SELECT sw_prod_cat.idCat,sw_prod_cat.cat_name,sw_prod_cat.description,sw_prod_cat.`status` FROM sw_prod_cat",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
 

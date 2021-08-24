@@ -1116,6 +1116,22 @@ exports.getAllPins = (req, res, next) => {
 }
 
 
+exports.addManualPoints = (req, res, next) => {
+    try {
+
+        let object = { "idMain": 2496, "A": null, "B": null, extra: {} }
+        this.addPoint({ tid: 2496, obj: object, invoice: 1221 }, res, next);
+
+
+
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+
 
 
 

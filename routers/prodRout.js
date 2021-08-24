@@ -19,4 +19,12 @@ router.post("/firstMessageBulk", prod.firstMessageBulk);
 
 router.post("/block", prod.block);
 
+//===========================================
+router.post("/addProduct", prod.addProduct);
+router.post("/updateProduct", prod.updateProduct);
+
+router.post("/addProdCat", prod.addProdCat);
+router.post("/updateProdCat", prod.updateProdCat);
+router.post("/getProdCat", prod.getProdCat);
 module.exports = router;
+
