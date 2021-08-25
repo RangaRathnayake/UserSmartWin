@@ -331,6 +331,19 @@ exports.getUsersList = (req, res, next) => {
     }
 }
 
+exports.getUsersListBYNic = (req, res, next) => {
+    try {
+        mycon.execute("SELECT `user`.idUser, uservalue.`value` FROM `user` INNER JOIN uservalue ON uservalue.userId = `user`.idUser INNER JOIN userkey ON uservalue.keyId = userkey.idUserKey WHERE uservalue.keyId = 21 AND uservalue.`value` LIKE '" + req.body.nic + "%' ORDER BY `user`.idUser ASC", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
 
 exports.update = (req, res, next) => {
     try {

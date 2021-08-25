@@ -49,6 +49,23 @@ exports.getAllProduct = (req, res, next) => {
     }
 };
 
+//getProduct by id
+exports.getproductbyid = (req, res, next) => {
+    try {
+        mycon.execute(
+            "SELECT sw_prod.idProd, sw_prod.prodName, sw_prod.prodImage, sw_prod.prodPrice, sw_prod.prodPoint, sw_prod.prodOther, sw_prod.prodStatus, sw_prod.description FROM sw_prod WHERE sw_prod.idProd = '"+req.body.prodid+"'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
+
 exports.getProductByPin = (req, res, next) => {
     try {
         mycon.execute(

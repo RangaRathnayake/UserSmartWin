@@ -22,6 +22,7 @@ router.post("/getUserData", user.getUserData);
 router.post("/getUserDataByPin", user.getUserDataByPin);
 router.post("/getValue", user.getValue);
 router.post("/getPinsById", user.getPinsById);
+router.post("/getUsersListBYNic",user.getUsersListBYNic);
 
 
 // router.post("/blockUser", user.blockUser);
