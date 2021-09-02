@@ -64,6 +64,35 @@ exports.getUserType = (req, res, next) => {
     }
 }
 
+
+exports.saveoncus = (req, res, next) => {
+    try {
+        mycon.execute("INSERT INTO `on_cus` ( `user_ful_name`, `mobile`, `adress`, `postalcode`, `email`, `active_status` ) VALUES ( '"+req.body.user_ful_name+"', '"+req.body.mobile+"', '"+req.body.adress+"', '"+req.body.postalcode+"', '"+req.body.email+"', '1' );",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getuidbymob = (req, res, next) => {
+    try {
+        mycon.execute("SELECT on_cus.on_cus_id FROM `on_cus` WHERE on_cus.mobile = '"+req.body.mob+"'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
 // userLogin
 exports.userLogin = (req, res, next) => {
     try {

@@ -27,5 +27,6 @@ router.post("/updateProduct", prod.updateProduct);
 router.post("/addProdCat", prod.addProdCat);
 router.post("/updateProdCat", prod.updateProdCat);
 router.post("/getProdCat", prod.getProdCat);
+router.post("/moreimgbyproid",prod.moreimgbyproid);
 module.exports = router;
 

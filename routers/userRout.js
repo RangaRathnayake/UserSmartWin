@@ -23,6 +23,8 @@ router.post("/getUserDataByPin", user.getUserDataByPin);
 router.post("/getValue", user.getValue);
 router.post("/getPinsById", user.getPinsById);
 router.post("/getUsersListBYNic",user.getUsersListBYNic);
+router.post("/saveoncus",user.saveoncus);
+router.post("/getuidbymob",user.getuidbymob);
 
 
 // router.post("/blockUser", user.blockUser);

@@ -17,6 +17,7 @@ const treeRout = require('./routers/treeRout');
 const prodRout = require('./routers/prodRout');
 const invoiceRout = require('./routers/invoice');
 const uploadRout = require('./routers/upload');
+const onpay = require('./routers/onPayRout')
 
 
 
@@ -71,6 +72,10 @@ app.use('/prod', prodRout);
 app.use('/invoice', invoiceRout);
 
 app.use('/up', uploadRout);
+
+app.use('/onpay', onpay);
+
+
 
 app.use((req, res, next) => {
     const error = new Error('Not Found');

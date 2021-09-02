@@ -66,6 +66,23 @@ exports.getproductbyid = (req, res, next) => {
     }
 };
 
+//moreimgbyproid
+exports.moreimgbyproid = (req, res, next) => {
+    try {
+        mycon.execute(
+            "SELECT images.url1 FROM `images` WHERE images.pro_id = '"+req.body.prodid+"' AND images.`status` = '1'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
+
 exports.getProductByPin = (req, res, next) => {
     try {
         mycon.execute(
