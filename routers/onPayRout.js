@@ -7,5 +7,7 @@ const checkAuth = require('../middleware/check-auth');
 
 router.post("/savepaydetails",onpay.save_payment_details);
 router.post("/getproprice",onpay.getproprice);
+router.post("/getorder",onpay.getmaxid);
+router.post("/updateby_orderid",onpay.updateby_orderid);
 
 module.exports = router;
