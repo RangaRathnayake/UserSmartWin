@@ -6,6 +6,7 @@ const checkAuth = require('../middleware/check-auth');
 
 //user
 router.post("/getAllProduct", prod.getAllProduct);
+router.post("/getprobyid", prod.getprobyid);
 router.post("/getproductbyid",prod.getproductbyid);
 router.post("/getProductByPin", prod.getProductByPin);
 router.post("/setProductIssuStatus", prod.setProductIssuStatus);

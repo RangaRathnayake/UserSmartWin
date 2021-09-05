@@ -49,6 +49,38 @@ exports.getAllProduct = (req, res, next) => {
     }
 };
 
+exports.getprobyid = (req, res, next) => {
+    try {
+        mycon.execute(
+            "SELECT sw_prod.idProd, sw_prod.prodName, sw_prod.prodImage, sw_prod.prodPrice, sw_prod.prodPoint, sw_prod.prodOther, sw_prod.prodStatus FROM sw_prod WHERE sw_prod.idProd = '"+req.body.prodid+"'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
+
+exports.getAllProduct_in_online = (req, res, next) => {
+    try {
+        mycon.execute(
+            "",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
+
 //getProduct by id
 exports.getproductbyid = (req, res, next) => {
     try {
