@@ -72,8 +72,11 @@ exports.updateby_orderid = (req, res, next) => {
 }
 
 exports.bank = (req, res, next) => {
+
+    console.log(req.body);
+    console.log("xxxxxx");
     try {
-        mycon.execute("INSERT INTO `swin`.`bank` (`obj`,`user_id`) VALUES ('"+req.body.obj+"','1');",
+        mycon.execute("INSERT INTO  `bank` (`obj`,`user_id`) VALUES ('" + req.body.obj + "','1');",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
