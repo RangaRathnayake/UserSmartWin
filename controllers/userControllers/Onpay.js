@@ -13,7 +13,7 @@ exports.save_payment_details = (req, res, next) => {
         let ts = Date.now();
         let date_ob = new Date(ts);
         console.log(date_ob);
-        mycon.execute("INSERT INTO `on_pay_details` ( `cus_id`, `pro_id`, `unit_price`, `bank_rate`, `bill_tot`, `tot`, `bank_order_id`, `active_status`, `order_type` ) VALUES ( '" + req.body.cusid + "', '" + req.body.proid + "', '" + req.body.uprice + "', '" + req.body.rate + "', '" + req.body.bill_tot + "', '" + req.body.tot + "', '" + req.body.bank_order_id + "', '0', '2' );",
+        mycon.execute("INSERT INTO `on_pay_details` ( `cus_id`, `pro_id`, `unit_price`, `bank_rate`, `bill_tot`, `tot`, `bank_order_id`, `active_status`, `order_type`) VALUES ( '" + req.body.cusid + "', '" + req.body.proid + "', '" + req.body.uprice + "', '" + req.body.rate + "', '" + req.body.bill_tot + "', '" + req.body.tot + "', '" + req.body.bank_order_id + "', '0', '2');",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -60,6 +60,20 @@ exports.getmaxid = (req, res, next) => {
 exports.updateby_orderid = (req, res, next) => {
     try {
         mycon.execute("UPDATE `on_pay_details` SET `active_status` = '" + req.body.status + "' WHERE `bank_order_id` = '" + req.body.order + "';",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.bank = (req, res, next) => {
+    try {
+        mycon.execute("INSERT INTO `swin`.`bank` (`obj`,`user_id`) VALUES ('"+req.body.obj+"','1');",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);

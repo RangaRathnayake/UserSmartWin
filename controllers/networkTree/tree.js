@@ -258,7 +258,13 @@ exports.newNode = (req, res, next) => {
 
     try {
 
+
+
         let b = req.body;
+
+
+        console.log(b);
+
         let userID = 0;
         let cusID = 0;
         var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
