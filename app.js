@@ -10,7 +10,7 @@ const http = require('http');
 const cors = require('cors');
 const app = express();
 const axios = require('axios')
-
+const initializeApp = "firebase/app";
 const indexRouter = require('./routers/index');
 const usersRout = require('./routers/userRout');
 const treeRout = require('./routers/treeRout');
@@ -151,6 +151,3 @@ function time() {
 // time();
 
 app.listen(port);
-
-
-

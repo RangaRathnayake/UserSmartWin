@@ -6,6 +6,32 @@ const mg = require('../../middleware/email');
 const { param } = require('../../routers');
 const e = require('express');
 
+const firebase = require('../../util/firebase_connect');
+
+exports.realEscapeString = (str) => {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+        switch (char) {
+            case "\0":
+                return "\\0";
+            case "\x08":
+                return "\\b";
+            case "\x09":
+                return "\\t";
+            case "\x1a":
+                return "\\z";
+            case "\n":
+                return "\\n";
+            case "\r":
+                return "\\r";
+            case "\"":
+            case "'":
+            case "\\":
+            case "%":
+                return "\\" + char; // prepends a backslash to backslash, percent,
+                // and double/single quotes
+        }
+    });
+}
 
 
 exports.save_payment_details = (req, res, next) => {
@@ -73,13 +99,15 @@ exports.updateby_orderid = (req, res, next) => {
 
 exports.bank = (req, res, next) => {
 
-    console.log(req.body);
+    console.log(req.body.object);
     console.log("xxxxxx");
     try {
-        mycon.execute("INSERT INTO  `bank` (`obj`,`user_id`) VALUES ('" + req.body.obj + "','1');",
+        mycon.execute("INSERT INTO  `bank` (`obj`,`user_id`) VALUES (" + JSON.stringify(req.body) + ",'1');",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
+                } else {
+                    console.log(error);
                 }
             });
     } catch (error) {
