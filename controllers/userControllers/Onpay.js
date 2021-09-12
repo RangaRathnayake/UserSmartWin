@@ -115,3 +115,134 @@ exports.bank = (req, res, next) => {
         res.status(500).send(error);
     }
 }
+
+
+exports.bankref = (req, res, next) => {
+
+    console.log(req.body.object);
+    console.log("xxxxxx");
+    try {
+        mycon.execute("INSERT INTO `bank_ref` ( `metaid`, `refno`, `active_status`, `amount` , `uid` , `proid` ) VALUES ( '"+req.body.mid+"', '"+req.body.refno+"', '0', '"+req.body.amount+"', '"+req.body.uid+"' , '"+req.body.proid+"' );",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getreflist = (req, res, next) => {
+
+    console.log(req.body.object);
+    console.log("xxxxxx");
+    try {
+        mycon.execute("SELECT sw_prod.prodName, bank_ref.id, bank_ref.amount FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.getreflistmore = (req, res, next) => {
+
+    console.log(req.body.object);
+    console.log("xxxxxx");
+    try {
+        mycon.execute("SELECT sw_prod.prodName, bank_ref.id, bank_ref.amount FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"' AND bank_ref.id = '"+req.body.refid+"'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.updateref = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("UPDATE `bank_ref` SET `refno` = '"+req.body.refno+"', `active_status` = '1' WHERE (`id` = '"+req.body.id+"');",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.pendingpro = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value`, sw_prod.prodName, sw_prod.prodPrice FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '1'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.pendingpro_all = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue. VALUE, sw_prod.prodName, sw_prod.prodPrice FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '1' AND bank_ref.id = '"+req.body.id+"'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.completebankprocess = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("UPDATE `bank_ref` SET `active_status` = '2' WHERE (`id` = '"+req.body.id+"');",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
