@@ -39,7 +39,7 @@ exports.save_payment_details = (req, res, next) => {
         let ts = Date.now();
         let date_ob = new Date(ts);
         console.log(date_ob);
-        mycon.execute("INSERT INTO `on_pay_details` ( `cus_id`, `pro_id`, `unit_price`, `bank_rate`, `bill_tot`, `tot`, `bank_order_id`, `active_status`, `order_type`) VALUES ( '" + req.body.cusid + "', '" + req.body.proid + "', '" + req.body.uprice + "', '" + req.body.rate + "', '" + req.body.bill_tot + "', '" + req.body.tot + "', '" + req.body.bank_order_id + "', '0', '2');",
+        mycon.execute("INSERT INTO `on_pay_details` ( `cus_id`, `pro_id`, `unit_price`, `bank_rate`, `bill_tot`, `tot`, `bank_order_id`, `active_status`, `order_type`, `paytype`) VALUES ( '" + req.body.cusid + "', '" + req.body.proid + "', '" + req.body.uprice + "', '" + req.body.rate + "', '" + req.body.bill_tot + "', '" + req.body.tot + "', '" + req.body.bank_order_id + "', '0', '2', '"+req.body.paytype+"' );",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -122,7 +122,7 @@ exports.bankref = (req, res, next) => {
     console.log(req.body.object);
     console.log("xxxxxx");
     try {
-        mycon.execute("INSERT INTO `bank_ref` ( `metaid`, `refno`, `active_status`, `amount` , `uid` , `proid` ) VALUES ( '"+req.body.mid+"', '"+req.body.refno+"', '0', '"+req.body.amount+"', '"+req.body.uid+"' , '"+req.body.proid+"' );",
+        mycon.execute("INSERT INTO `bank_ref` ( `metaid`, `refno`, `active_status`, `amount` , `uid` , `proid` ,`typeid`) VALUES ( '"+req.body.mid+"', '"+req.body.refno+"', '0', '"+req.body.amount+"', '"+req.body.uid+"' , '"+req.body.proid+"' ,'"+req.body.typeid+"' );",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -215,7 +215,7 @@ exports.pendingpro_all = (req, res, next) => {
 
     console.log(req.body.object);
     try {
-        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue. VALUE, sw_prod.prodName, sw_prod.prodPrice FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '1' AND bank_ref.id = '"+req.body.id+"'",
+        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value` AS valu, sw_prod.prodName, bank_ref.img_path, sw_prod.prodPrice, bank_ref.typeid FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '1' AND bank_ref.id = '"+req.body.id+"'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);

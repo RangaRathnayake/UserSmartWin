@@ -11,6 +11,7 @@ var appRoot = require('app-root-path');
 
 // const uppath = "./uploads/";
 const uppath = "../images/";
+const uppathres = "../recipt/";
 // const downpath = "https://www.coopshop.lk/uploads/profile/";
 
 const storage = multer.diskStorage({
@@ -25,9 +26,17 @@ const storage = multer.diskStorage({
 }
 );
 
+
+
+
+
 const upload = multer(
     { storage: storage }
 );
+
+
+
+
 
 router.post("/upload", upload.single('attach'), (req, res, next) => {
     console.log("call method");
@@ -53,6 +62,58 @@ router.post("/upload", upload.single('attach'), (req, res, next) => {
         console.log(error);
     }
 });
+
+
+
+
+
+
+// ************ updoad recipt **********//
+
+const storageres = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, uppathres);
+    },
+    filename: function (req, file, cb) {
+        const date = dateFormat(new Date(), 'yyyyMMddHHmmss_', 'en-US', '+0530');
+        path = date + file.originalname;
+        cb(null, path);
+    }
+}
+);
+
+const uploadres = multer(
+    { storage: storageres }
+);
+
+router.post("/uploadres", uploadres.single('attach'), (req, res, next) => {
+    console.log("call method");
+    try {
+        console.log(req.file.path + "  --> Path ");
+        const ftype = filePath.extname(req.file.path);
+        console.log(ftype + "  --> Type ");
+        console.log(req.body);
+        let pp = path;
+        console.log(path + '          ---------- path       ')
+
+        //let qq = "UPDATE `sw_prod` SET `prodImage`='" + this.rES(path) + "' WHERE `idProd`=" + req.body.pid;
+        let qq = "UPDATE `bank_ref` SET `img_path` = '"+this.rES(path)+"' WHERE (`id` = '"+req.body.pid+"');";
+        mycon.execute(qq, (error, rows, next) => {
+            if (!error) {
+                res.send({ imgpath: pp });
+            } else {
+                console.log(error);
+            }
+        });
+
+    } catch (error) {
+        console.log("-----")
+        console.log(error);
+    }
+});
+
+
+// ************ updoad recipt **********//
 
 
 
