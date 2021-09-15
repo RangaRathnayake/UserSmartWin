@@ -216,7 +216,7 @@ exports.complategpro = (req, res, next) => {
 
     console.log(req.body.object);
     try {
-        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value`, sw_prod.prodName, sw_prod.prodPrice, bank_ref.img_path, bank_ref.typeid, bank_ref.sys_ref_no, bank_ref.cus_sys_ref_no FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '2'",
+        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value`, sw_prod.prodName, sw_prod.prodPrice, bank_ref.img_path, bank_ref.typeid, bank_ref.sys_ref_no, bank_ref.cus_sys_ref_no FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '2' ORDER BY bank_ref.id DESC",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
