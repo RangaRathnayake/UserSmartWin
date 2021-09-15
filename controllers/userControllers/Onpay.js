@@ -179,7 +179,7 @@ exports.updateref = (req, res, next) => {
 
     console.log(req.body.object);
     try {
-        mycon.execute("UPDATE `bank_ref` SET `refno` = '"+req.body.refno+"', `active_status` = '1' WHERE (`id` = '"+req.body.id+"');",
+        mycon.execute("UPDATE `bank_ref` SET `refno` = '"+req.body.refno+"', `active_status` = '1', `cus_sys_ref_no` = '"+req.body.sys_ref_no+"' WHERE (`id` = '"+req.body.id+"');",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -211,11 +211,49 @@ exports.pendingpro = (req, res, next) => {
     }
 }
 
+
+exports.complategpro = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value`, sw_prod.prodName, sw_prod.prodPrice, bank_ref.img_path, bank_ref.typeid, bank_ref.sys_ref_no, bank_ref.cus_sys_ref_no FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '2'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
 exports.pendingpro_all = (req, res, next) => {
 
     console.log(req.body.object);
     try {
-        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value` AS valu, sw_prod.prodName, bank_ref.img_path, sw_prod.prodPrice, bank_ref.typeid FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '1' AND bank_ref.id = '"+req.body.id+"'",
+        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value` AS valu, sw_prod.prodName, bank_ref.img_path, sw_prod.prodPrice, bank_ref.typeid, bank_ref.sys_ref_no, bank_ref.cus_sys_ref_no FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '1' AND bank_ref.id = '"+req.body.id+"'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.com_all = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value` AS valu, sw_prod.prodName, bank_ref.img_path, sw_prod.prodPrice, bank_ref.typeid, bank_ref.sys_ref_no, bank_ref.cus_sys_ref_no FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '2' AND bank_ref.id = '"+req.body.id+"'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -234,6 +272,43 @@ exports.completebankprocess = (req, res, next) => {
     console.log(req.body.object);
     try {
         mycon.execute("UPDATE `bank_ref` SET `active_status` = '2' WHERE (`id` = '"+req.body.id+"');",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getidbymid = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("SELECT bank_ref.id FROM bank_ref WHERE bank_ref.metaid = '"+req.body.metid+"'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.add_sys_ref = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("UPDATE `bank_ref` SET `sys_ref_no` = '"+req.body.refno+"' WHERE (`metaid` = '"+req.body.metid+"');",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
