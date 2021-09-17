@@ -184,6 +184,41 @@ exports.firstMessageBulk = (req, res, next) => {
     }
 };
 
+
+// exports.getcount = (req, res, next) => {
+//     console.log("Start")
+//     try {
+//         let query =
+//             "SELECT IFNULL(COUNT(sw_prod.prodImage), 0) AS count FROM `sw_prod` WHERE sw_prod.idProd = '"+req.body.prodid+"'";
+//         mycon.execute(query, (e, r, f) => {
+//             if (!e) {
+//                 this.bulsSendingMethod(JSON.stringify(r));
+//                 res.send({ ok: "ok" });
+//             }
+//         });
+//     } catch (error) {
+//         console.log(error);
+//     }
+// };
+
+
+exports.getcount = (req, res, next) => {
+    try {
+        mycon.execute(
+            "SELECT IFNULL(COUNT(sw_prod.prodImage), 0) AS count FROM `sw_prod` WHERE sw_prod.idProd = '"+req.body.prodid+"'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
+
+
 exports.bulsSendingMethod = (data) => {
     let list = JSON.parse(data);
     let lenth = list.length;

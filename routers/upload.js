@@ -48,10 +48,16 @@ router.post("/upload", upload.single('attach'), (req, res, next) => {
         let pp = path;
         console.log(path + '          ---------- path       ')
 
-        let qq = "UPDATE `sw_prod` SET `prodImage`='" + this.rES(path) + "' WHERE `idProd`=" + req.body.pid;
+        let qq = "UPDATE `sw_prod` SET `prodImage`='" +"https://smartwinent.com/images/"+this.rES(path) + "' WHERE `idProd`=" + req.body.pid;
         mycon.execute(qq, (error, rows, next) => {
             if (!error) {
                 res.send({ imgpath: pp });
+                let qqq = "INSERT INTO `images` (`pro_id`, `url1`, `status`) VALUES ('"+req.body.pid+"', '"+"https://smartwinent.com/images/"+this.rES(path)+"', '1');";
+                mycon.execute(qqq, (error1, rows, next) => { 
+                    if (!error1) {
+                        console.log("xxxxxxxxxx");
+                    }
+                 });
             } else {
                 console.log(error);
             }
@@ -62,6 +68,37 @@ router.post("/upload", upload.single('attach'), (req, res, next) => {
         console.log(error);
     }
 });
+
+
+//////// img for slide show /////
+
+router.post("/uploadslise", upload.single('attach'), (req, res, next) => {
+    console.log("call method");
+    try {
+        console.log(req.file.path + "  --> Path ");
+        const ftype = filePath.extname(req.file.path);
+        console.log(ftype + "  --> Type ");
+        console.log(req.body);
+        let pp = path;
+        console.log(path + '          ---------- path       ')
+
+        let qq = "INSERT INTO `images` (`pro_id`, `url1`, `status`) VALUES ('"+req.body.pid+"', '"+"https://smartwinent.com/images/"+this.rES(path)+"', '1');";
+        mycon.execute(qq, (error, rows, next) => {
+            if (!error) {
+               // res.send({ imgpath: pp });
+            } else {
+                console.log(error);
+            }
+        });
+
+    } catch (error) {
+        console.log("-----")
+        console.log(error);
+    }
+});
+
+
+////////////////////////////////
 
 
 
