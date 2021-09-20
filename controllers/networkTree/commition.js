@@ -7,7 +7,7 @@ const { map } = require('mysql2/lib/constants/charset_encodings');
 
 
 exports.realEscapeString = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
         switch (char) {
             case "\0":
                 return "\\0";
@@ -26,7 +26,7 @@ exports.realEscapeString = (str) => {
             case "\\":
             case "%":
                 return "\\" + char; // prepends a backslash to backslash, percent,
-            // and double/single quotes
+                // and double/single quotes
         }
     });
 }
@@ -44,8 +44,8 @@ exports.balancePoint = (req, res, next) => {
                             var point = req.body.point;
                             for (var x = 0; x < point; x++) {
                                 //        console.log(x);
-                                mycon.execute("INSERT INTO `sw_point` (  `userId`, `commitionId`, `invoiceId`, `Side`, `point`, `status`, `treeid` ) "
-                                    + " VALUES	(  " + data.userId + ", " + data.commitionId + ", 1, '" + req.body.side + "', 1, 1, '" + req.body.tid + "' )",
+                                mycon.execute("INSERT INTO `sw_point` (  `userId`, `commitionId`, `invoiceId`, `Side`, `point`, `status`, `treeid` ) " +
+                                    " VALUES	(  " + data.userId + ", " + data.commitionId + ", 1, '" + req.body.side + "', 1, 1, '" + req.body.tid + "' )",
                                     (ee, rr, ff) => {
                                         if (ee) {
                                             console.log(ee);
@@ -139,14 +139,16 @@ exports.processB = (req, res, next, d) => {
         if (d.ap > 0 && d.bp > 0) {
             //   console.log(d.tid + "  -  " + d.ap + "  - " + d.bp + " --- " + d.proid + "-----" + d.uid);
 
-            let ca = d.ap; let cb = d.bp;
+            let ca = d.ap;
+            let cb = d.bp;
             let round = 0;
             let breakBy = '';
 
             for (var i = 1; i < 5; i++) {
                 round = i;
                 //     console.log(i);
-                ca = ca - 1; cb = cb - 1;
+                ca = ca - 1;
+                cb = cb - 1;
                 //      console.log(ca + '  ' + cb);
 
                 if (ca == 0 && cb == 0) {
@@ -213,8 +215,8 @@ exports.processC = (req, res, next, d) => {
                             let introid = rrr[0].introducerid;
                             let introcom = rrr[0].introducerCommitionId;
                             let comiton = d.amount * 10 / 100;
-                            mycon.execute("INSERT INTO `sw_introcommition`( `user_id`, `tree_id`, `process_id`, `commition_id`, `pointcom_id`, `amount`, `status`) "
-                                + " VALUES ( '" + introid + "', '" + d.tid + "', '" + d.prosid + "', '" + d.comid + "', '" + pintcom + "', '" + comiton + "', 1)", (e, r, f) => {
+                            mycon.execute("INSERT INTO `sw_introcommition`( `user_id`, `tree_id`, `process_id`, `commition_id`, `pointcom_id`, `amount`, `status`) " +
+                                " VALUES ( '" + introid + "', '" + d.tid + "', '" + d.prosid + "', '" + d.comid + "', '" + pintcom + "', '" + comiton + "', 1)", (e, r, f) => {
                                     if (!e) {
                                         //                      console.log(r);
                                         let obj = {
@@ -246,13 +248,13 @@ exports.processD = (req, res, next, d) => {
     try {
 
         let obj = {
-            tid: d.tid,
-            pintcom: d.pintcom,
-            prosid: d.prosid,
-            round: d.round,
-            pid: 0,
-        }
-        //   console.log(obj);
+                tid: d.tid,
+                pintcom: d.pintcom,
+                prosid: d.prosid,
+                round: d.round,
+                pid: 0,
+            }
+            //   console.log(obj);
 
         var BreakException = {};
 
@@ -349,6 +351,98 @@ exports.getPointCommitonList = (req, res, next) => {
     }
 }
 
+
+exports.getPointCommitonListToTable = (req, res, next) => {
+    try {
+
+        let monthNames = [
+            "January", "February", "March",
+            "April", "May", "June",
+            "July", "August", "September",
+            "October", "November", "December"
+        ];
+
+        mycon.execute("SELECT sw_pointcommition.user_id, sw_pointcommition.process_id AS A,sw_pointcommition.process_id AS B,sw_pointcommition.process_id AS C,sw_pointcommition.process_id AS D,sw_pointcommition.process_id AS E,sw_pointcommition.process_id AS F,sw_pointcommition.process_id AS G,sum(sw_pointcommition.amount) AS H,sw_pointcommition.process_id AS I,sw_pointcommition.process_id AS J,sw_pointcommition.process_id AS K,sw_pointcommition.process_id AS L FROM sw_pointcommition WHERE sw_pointcommition.process_id='" + req.body.processID + "' GROUP BY sw_pointcommition.user_id", (e, r, f) => {
+
+            day = dateFormat(new Date(), "yymmdd");
+            console.log(day);
+
+            if (!e) {
+                // res.send(r);
+                var l = r.length;
+                var x = 1;
+
+                function getData(i) {
+                    setTimeout(() => {
+
+                        var uid = r[x - 1].user_id;
+                        r[x - 1].A = '';
+                        r[x - 1].B = '';
+                        r[x - 1].C = '000';
+                        r[x - 1].D = '';
+                        r[x - 1].E = '';
+                        r[x - 1].F = 23;
+                        r[x - 1].G = 0;
+                        r[x - 1].I = i;
+                        r[x - 1].J = monthNames[new Date().getMonth()];
+                        r[x - 1].K = day;
+                        r[x - 1].L = '000000';
+
+
+                        mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=2", (ee, rr, ff) => {
+                            if (!ee) {
+                                if (rr[0].value) r[i - 1].E = rr[0].value;
+                            }
+                        });
+
+                        mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=23", (ee, rr, ff) => {
+                            if (!ee) {
+                                if (rr[0]) r[i - 1].A = rr[0].value;
+                            }
+                        });
+
+                        mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=24", (ee, rr, ff) => {
+                            if (!ee) {
+                                if (rr[0]) r[i - 1].B = rr[0].value;
+                            }
+                        });
+
+                        mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=18", (ee, rr, ff) => {
+                            if (!ee) {
+                                if (rr[0]) r[i - 1].D = rr[0].value;
+                            }
+                        });
+
+                        delete[x - 1].user_id;
+                        x = x + 1;
+
+                        if (x <= l) {
+                            getData(x);
+                            if (x == l) {
+                                setTimeout(() => {
+                                    res.send(r);
+                                }, 200);
+                            }
+                        }
+
+
+                    }, 50);
+                }
+                setTimeout(() => {
+                    getData(1);
+                }, 100);
+
+            }
+
+
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
 exports.getIntroCommitonList = (req, res, next) => {
     try {
         mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND sw_introcommition.process_id='" + req.body.processID + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
@@ -361,6 +455,97 @@ exports.getIntroCommitonList = (req, res, next) => {
         res.status(500).send(error);
     }
 }
+
+exports.getIntroCommitonListToTable = (req, res, next) => {
+    try {
+        let monthNames = [
+            "January", "February", "March",
+            "April", "May", "June",
+            "July", "August", "September",
+            "October", "November", "December"
+        ];
+
+        mycon.execute("SELECT sw_introcommition.user_id,sw_introcommition.process_id AS A,sw_introcommition.process_id AS B,sw_introcommition.process_id AS C,sw_introcommition.process_id AS D,sw_introcommition.process_id AS E,sw_introcommition.process_id AS F,sw_introcommition.process_id AS G,sum(sw_introcommition.amount) AS H,sw_introcommition.process_id AS I,sw_introcommition.process_id AS J,sw_introcommition.process_id AS K,sw_introcommition.process_id AS L FROM sw_introcommition WHERE sw_introcommition.process_id='" + req.body.processID + "' GROUP BY sw_introcommition.user_id", (e, r, f) => {
+
+            day = dateFormat(new Date(), "yymmdd");
+            console.log(day);
+
+            if (!e) {
+                // res.send(r);
+                var l = r.length;
+                var x = 1;
+
+                function getData(i) {
+                    setTimeout(() => {
+
+                        var uid = r[x - 1].user_id;
+                        r[x - 1].A = '';
+                        r[x - 1].B = '';
+                        r[x - 1].C = '000';
+                        r[x - 1].D = '';
+                        r[x - 1].E = '';
+                        r[x - 1].F = 23;
+                        r[x - 1].G = 0;
+                        r[x - 1].I = i;
+                        r[x - 1].J = monthNames[new Date().getMonth()];
+                        r[x - 1].K = day;
+                        r[x - 1].L = '000000';
+
+
+                        mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=2", (ee, rr, ff) => {
+                            if (!ee) {
+                                if (rr[0].value) r[i - 1].E = rr[0].value;
+                            }
+                        });
+
+                        mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=23", (ee, rr, ff) => {
+                            if (!ee) {
+                                if (rr[0]) r[i - 1].A = rr[0].value;
+                            }
+                        });
+
+                        mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=24", (ee, rr, ff) => {
+                            if (!ee) {
+                                if (rr[0]) r[i - 1].B = rr[0].value;
+                            }
+                        });
+
+                        mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=18", (ee, rr, ff) => {
+                            if (!ee) {
+                                if (rr[0]) r[i - 1].D = rr[0].value;
+                            }
+                        });
+
+                        delete[x - 1].user_id;
+                        x = x + 1;
+
+                        if (x <= l) {
+                            getData(x);
+                            if (x == l) {
+                                setTimeout(() => {
+                                    res.send(r);
+                                }, 200);
+                            }
+                        }
+
+
+                    }, 50);
+                }
+                setTimeout(() => {
+                    getData(1);
+                }, 100);
+
+            }
+
+
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
 
 
 exports.getPointCommitonByUser = (req, res, next) => {
@@ -473,7 +658,7 @@ exports.getPointCommitionById = (req, res, next) => {
                         el.val = el.B * 2000;
                     }
                     arr.push(el);
-                   // console.log(el);
+                    // console.log(el);
                 });
                 const obj = Object.fromEntries(mm);
                 res.send(arr);
@@ -484,5 +669,3 @@ exports.getPointCommitionById = (req, res, next) => {
         res.status(500).send(error);
     }
 }
-
-
