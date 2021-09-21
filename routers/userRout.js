@@ -22,9 +22,9 @@ router.post("/getUserData", user.getUserData);
 router.post("/getUserDataByPin", user.getUserDataByPin);
 router.post("/getValue", user.getValue);
 router.post("/getPinsById", user.getPinsById);
-router.post("/getUsersListBYNic",user.getUsersListBYNic);
-router.post("/saveoncus",user.saveoncus);
-router.post("/getuidbymob",user.getuidbymob);
+router.post("/getUsersListBYNic", user.getUsersListBYNic);
+router.post("/saveoncus", user.saveoncus);
+router.post("/getuidbymob", user.getuidbymob);
 
 
 // router.post("/blockUser", user.blockUser);
@@ -42,5 +42,10 @@ router.post("/getPrivilagesByUserType", privilage.getPrivilagesByUserType);
 router.post("/singalMessage", user.singalMessage);
 
 router.post("/sendBulkSms", user.sendBulkSms);
+
+
+router.post("/sendBulkSms", user.sendBulkSms);
+
+router.post("/bankCodeBranchCode", user.bankCodeBranchCode);
 
 module.exports = router;
