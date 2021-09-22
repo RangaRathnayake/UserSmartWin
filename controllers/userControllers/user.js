@@ -4,10 +4,11 @@ const bcript = require('bcrypt');
 var dateFormat = require('dateformat');
 const mg = require('../../middleware/email');
 const { param } = require('../../routers');
+const { getPrivilagesByUserType } = require('./privilege');
 
 
 exports.realEscapeString = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
         switch (char) {
             case "\0":
                 return "\\0";
@@ -26,7 +27,7 @@ exports.realEscapeString = (str) => {
             case "\\":
             case "%":
                 return "\\" + char; // prepends a backslash to backslash, percent,
-            // and double/single quotes
+                // and double/single quotes
         }
     });
 }
@@ -67,7 +68,7 @@ exports.getUserType = (req, res, next) => {
 
 exports.saveoncus = (req, res, next) => {
     try {
-        mycon.execute("INSERT INTO `on_cus` ( `user_ful_name`, `mobile`, `adress`, `postalcode`, `email`, `active_status` ) VALUES ( '"+req.body.user_ful_name+"', '"+req.body.mobile+"', '"+req.body.adress+"', '"+req.body.postalcode+"', '"+req.body.email+"', '1' );",
+        mycon.execute("INSERT INTO `on_cus` ( `user_ful_name`, `mobile`, `adress`, `postalcode`, `email`, `active_status` ) VALUES ( '" + req.body.user_ful_name + "', '" + req.body.mobile + "', '" + req.body.adress + "', '" + req.body.postalcode + "', '" + req.body.email + "', '1' );",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -81,7 +82,7 @@ exports.saveoncus = (req, res, next) => {
 
 exports.getuidbymob = (req, res, next) => {
     try {
-        mycon.execute("SELECT on_cus.on_cus_id FROM `on_cus` WHERE on_cus.mobile = '"+req.body.mob+"'",
+        mycon.execute("SELECT on_cus.on_cus_id FROM `on_cus` WHERE on_cus.mobile = '" + req.body.mob + "'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -110,13 +111,12 @@ exports.userLogin = (req, res, next) => {
                             if (result) {
 
                                 const token = jwt.sign({
-                                    uid: user.idUser,
-                                    email: user.email,
-                                    mobile: user.mobileno,
-                                    uType: user.utypeId
-                                },
-                                    process.env.JWT_KEY,
-                                    {
+                                        uid: user.idUser,
+                                        email: user.email,
+                                        mobile: user.mobileno,
+                                        uType: user.utypeId
+                                    },
+                                    process.env.JWT_KEY, {
                                         expiresIn: "1h"
                                     },
                                 );
@@ -519,6 +519,63 @@ exports.sendBulkSms = (req, res, next) => {
 
 
 
+exports.bankCodeBranchCode = (req, res, next) => {
+    try {
+        mycon.execute("SELECT `user`.idUser FROM `user`",
+            (error, rows, fildData) => {
+                if (!error) {
+                    let l = rows.length;
+
+                    res.send(rows);
+                    let x = 0;
+
+                    function getvalues() {
+                        let uid = rows[x].idUser;
+
+                        mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=23", (e, r, f) => {
+                            if (!e) {
+                                if (r[0]) {
+                                    console.log(r[0].value);
+                                } else {
+                                    //  console.log(r[0].value);
+
+
+                                    mycon.execute("INSERT INTO `uservalue`( `userId`, `keyId`, `value`, `valueStatus`) VALUES ( '" + uid + "', '23', '', 1)", (ee, rr, ff) => {
+                                        if (ee) { console.log(ee) }
+                                    })
+                                    mycon.execute("INSERT INTO `uservalue`( `userId`, `keyId`, `value`, `valueStatus`) VALUES ( '" + uid + "', '24', '', 1)", (eee, rrr, fff) => {
+                                        if (eee) { console.log(eee) }
+                                    })
+
+
+                                }
+                            }
+                        })
+
+                        x = x + 1;
+                        setTimeout(() => {
+                            if (x <= l) {
+                                getvalues();
+                            }
+                        }, 30);
+                    }
+
+                    getvalues();
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+
+
+
+
+
+
 
 
 // forgetPassword
@@ -526,5 +583,3 @@ exports.sendBulkSms = (req, res, next) => {
 // verify
 
 // etc...
-
-
