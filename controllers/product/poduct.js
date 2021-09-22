@@ -36,7 +36,7 @@ exports.realEscapeString = (str) => {
 exports.getAllProduct = (req, res, next) => {
     try {
         mycon.execute(
-            "SELECT sw_prod.idProd,sw_prod.prodName,sw_prod.prodImage,sw_prod.prodPrice,sw_prod.prodPoint,sw_prod.prodOther,sw_prod.prodStatus FROM sw_prod",
+            "SELECT sw_prod.idProd,sw_prod.prodName,sw_prod.prodImage,sw_prod.prodPrice,sw_prod.prodPoint,sw_prod.prodOther,sw_prod.prodStatus FROM sw_prod WHERE sw_prod.prodStatus='1'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
