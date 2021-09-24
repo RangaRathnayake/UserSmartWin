@@ -321,3 +321,40 @@ exports.add_sys_ref = (req, res, next) => {
         res.status(500).send(error);
     }
 }
+
+
+exports.del = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("UPDATE `bank_ref` SET `active_status` = '9' WHERE (`id` = '"+req.body.id+"');",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.refcount = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("SELECT COUNT(bank_ref.refno) AS count FROM `bank_ref` WHERE bank_ref.refno = '"+req.body.refno+"'",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}

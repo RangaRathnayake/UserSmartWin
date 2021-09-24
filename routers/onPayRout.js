@@ -21,4 +21,7 @@ router.post("/com_all",onpay.com_all);
 router.post("/updatestatus",onpay.completebankprocess);
 router.post("/getid",onpay.getidbymid);
 router.post("/addsysref",onpay.add_sys_ref);
+
+router.post("/del",onpay.del);
+router.post("/refcount",onpay.refcount);
 module.exports = router;
