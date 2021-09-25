@@ -141,7 +141,7 @@ exports.getreflist = (req, res, next) => {
     console.log(req.body.object);
     console.log("xxxxxx");
     try {
-        mycon.execute("SELECT sw_prod.prodName, bank_ref.id, bank_ref.amount FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"'",
+        mycon.execute("SELECT sw_prod.prodName, bank_ref.id, bank_ref.amount FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"' AND bank_ref.id IN ( SELECT MAX(bank_ref.id) FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"' )",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -309,6 +309,43 @@ exports.add_sys_ref = (req, res, next) => {
     console.log(req.body.object);
     try {
         mycon.execute("UPDATE `bank_ref` SET `sys_ref_no` = '"+req.body.refno+"' WHERE (`metaid` = '"+req.body.metid+"');",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.del = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("UPDATE `bank_ref` SET `active_status` = '9' WHERE (`id` = '"+req.body.id+"');",
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.refcount = (req, res, next) => {
+
+    console.log(req.body.object);
+    try {
+        mycon.execute("SELECT COUNT(bank_ref.refno) AS count FROM `bank_ref` WHERE bank_ref.refno = '"+req.body.refno+"'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
