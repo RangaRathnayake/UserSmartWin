@@ -141,7 +141,7 @@ exports.getreflist = (req, res, next) => {
     console.log(req.body.object);
     console.log("xxxxxx");
     try {
-        mycon.execute("SELECT sw_prod.prodName, bank_ref.id, bank_ref.amount FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"'",
+        mycon.execute("SELECT sw_prod.prodName, bank_ref.id, bank_ref.amount FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"' AND bank_ref.id IN ( SELECT MAX(bank_ref.id) FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"' )",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
