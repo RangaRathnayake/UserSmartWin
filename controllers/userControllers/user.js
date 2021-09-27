@@ -304,30 +304,34 @@ exports.createPassword = (req, res, next) => {
     try {
         mycon.execute("SELECT `user`.email,`user`.pword,`user`.mobileno,`user`.authcode,`user`.idUser,`user`.`status`,`user`.dateTime,`user`.utypeId FROM `user` WHERE `user`.idUser=" + b.uid, (e, r, f) => {
             if (!e) {
-                if (r[0] && r[0].idUser > 0) {
-                    mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + b.uid + "' AND uservalue.keyId=21", (eee, rrr, fff) => {
-                        if (!eee) {
-                            // console.log(rrr);
-                            if (rrr[0].value == b.code) {
-                                bcript.hash(req.body.pword, 10, (err, hash) => {
-                                    if (err) {
-                                        return status(500).json({ error: err });
-                                    } else {
-                                        console.log(hash);
-                                        mycon.execute("UPDATE  `user` SET  `pword` = '" + hash + "',  `authcode` = null, `status` = 1, `utypeId` = 3 WHERE	`idUser` = " + b.uid, (ee, rr, ff) => {
-                                            if (!ee) {
-                                                res.send({ mg: "password created" });
-                                            }
-                                        });
-                                    }
-                                });
-                            } else {
-                                res.send({ mg: "NIC Is Wrong" });
-                            }
+                if (r[0] && r[0].authcode == b.code) {
+
+
+                    // mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + b.uid + "' AND uservalue.keyId=21", (eee, rrr, fff) => {
+                    //     if (!eee) {
+                    // console.log(rrr);
+                    // if (rrr[0].value == b.code) {
+                    bcript.hash(req.body.pword, 10, (err, hash) => {
+                        if (err) {
+                            return status(500).json({ error: err });
                         } else {
-                            res.send({ mg: "No NIC" });
+                            console.log(hash);
+                            mycon.execute("UPDATE  `user` SET  `pword` = '" + hash + "',  `status` = 1, `utypeId` = 3 WHERE	`idUser` = " + b.uid, (ee, rr, ff) => {
+                                if (!ee) {
+                                    res.send({ mg: "password created" });
+                                }
+                            });
                         }
                     });
+                    // } else {
+                    //     res.send({ mg: "NIC Is Wrong" });
+                    // }
+                    // } else {
+                    //     res.send({ mg: "No NIC" });
+                    // }
+                    // });
+
+
                 } else {
                     res.send({ mg: "Vreification Code is Wrong" });
                 }
