@@ -333,7 +333,7 @@ exports.createPassword = (req, res, next) => {
 
 
                 } else {
-                    res.send({ mg: "Vreification Code is Wrong" });
+                    res.send({ mg: "Verification Code is Wrong" });
                 }
             } else {
                 console.log(e);
