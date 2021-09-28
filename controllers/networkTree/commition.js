@@ -410,11 +410,32 @@ exports.getPointCommitonListToTable = (req, res, next) => {
                         mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=18", (ee, rr, ff) => {
                             if (!ee) {
                                 if (rr[0]) r[i - 1].D = rr[0].value;
+
+                                let acc = rr[0].value;
+
+                                if (acc.length == 12) { if (rr[0]) r[i - 1].D = acc }
+
+                                if (acc.length == 11) { if (rr[0]) r[i - 1].D = '0' + acc }
+
+                                if (acc.length == 10) { if (rr[0]) r[i - 1].D = '00' + acc }
+
+                                if (acc.length == 9) { if (rr[0]) r[i - 1].D = '000' + acc }
+
+                                if (acc.length == 8) { if (rr[0]) r[i - 1].D = '0000' + acc }
+
+                                if (acc.length == 7) { if (rr[0]) r[i - 1].D = '00000' + acc }
+
+                                if (acc.length == 6) { if (rr[0]) r[i - 1].D = '000000' + acc }
+
+                                if (acc.length == 5) { if (rr[0]) r[i - 1].D = '0000000' + acc }
+
                             }
                         });
 
                         delete[x - 1].user_id;
                         x = x + 1;
+
+                        r[i - 1].H = r[i - 1].H + "00";
 
                         if (x <= l) {
                             getData(x);
@@ -513,11 +534,32 @@ exports.getIntroCommitonListToTable = (req, res, next) => {
                         mycon.execute("SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" + uid + "' AND uservalue.keyId=18", (ee, rr, ff) => {
                             if (!ee) {
                                 if (rr[0]) r[i - 1].D = rr[0].value;
+
+                                let acc = rr[0].value;
+
+                                if (acc.length == 12) { if (rr[0]) r[i - 1].D = acc }
+
+                                if (acc.length == 11) { if (rr[0]) r[i - 1].D = '0' + acc }
+
+                                if (acc.length == 10) { if (rr[0]) r[i - 1].D = '00' + acc }
+
+                                if (acc.length == 9) { if (rr[0]) r[i - 1].D = '000' + acc }
+
+                                if (acc.length == 8) { if (rr[0]) r[i - 1].D = '0000' + acc }
+
+                                if (acc.length == 7) { if (rr[0]) r[i - 1].D = '00000' + acc }
+
+                                if (acc.length == 6) { if (rr[0]) r[i - 1].D = '000000' + acc }
+
+                                if (acc.length == 5) { if (rr[0]) r[i - 1].D = '0000000' + acc }
+
                             }
                         });
 
                         delete[x - 1].user_id;
                         x = x + 1;
+
+                        r[i - 1].H = r[i - 1].H + "00";
 
                         if (x <= l) {
                             getData(x);
