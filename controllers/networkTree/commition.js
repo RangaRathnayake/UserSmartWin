@@ -435,7 +435,7 @@ exports.getPointCommitonListToTable = (req, res, next) => {
                         delete[x - 1].user_id;
                         x = x + 1;
 
-                        r[i - 1].H = r[i - 1].H + "00";
+                        r[i - 1].H = r[i - 1].H * 100;
 
                         if (x <= l) {
                             getData(x);
@@ -559,7 +559,7 @@ exports.getIntroCommitonListToTable = (req, res, next) => {
                         delete[x - 1].user_id;
                         x = x + 1;
 
-                        r[i - 1].H = r[i - 1].H + "00";
+                        r[i - 1].H = r[i - 1].H * 100;
 
                         if (x <= l) {
                             getData(x);
