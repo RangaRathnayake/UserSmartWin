@@ -43,8 +43,8 @@ exports.emailSend = (param) => {
 
         // console.log(param);
         transporter.sendMail(
-            mailOptions
-            , function (error, info) {
+            mailOptions,
+            function(error, info) {
                 if (error) {
                     console.log(error);
                 } else {
@@ -84,19 +84,21 @@ exports.smsSend = (param) => {
 
             console.log(" ----------------------------------- mobile : " + mobile)
 
-            http.get("" + link + "id=" + id + "&password=" + pword + "&text=" + message + "&to=" + mobile + "&from=SmartWin"
-                , function (err, res, body) {
-                    if (err) {
-                        console.log("SMS  -------------- eroor on");
-                        console.log(body);
-                        // console.log(err);
-                    } else {
-                        console.log("SMS Sent ---------------");
-                        console.log(body);
-                        // console.log(res);
-                    }
+
+            // http://textit.biz/sendmsg/index.php?id=%2294753771770%22&password=%225400%22&text=%22Testing%22&to=%220702517628%22&from=%22SmartWin%22
+
+
+            http.get("" + link + "id=" + id + "&password=" + pword + "&text=" + message + "&to=" + mobile + "&from=SmartWin", function(err, res, body) {
+                if (err) {
+                    console.log("SMS  -------------- eroor on");
+                    console.log(body);
+                    // console.log(err);
+                } else {
+                    console.log("SMS Sent ---------------");
+                    console.log(body);
+                    // console.log(res);
                 }
-            );
+            });
 
         }
     });

@@ -39,7 +39,7 @@ exports.save_payment_details = (req, res, next) => {
         let ts = Date.now();
         let date_ob = new Date(ts);
         console.log(date_ob);
-        mycon.execute("INSERT INTO `on_pay_details` ( `cus_id`, `pro_id`, `unit_price`, `bank_rate`, `bill_tot`, `tot`, `bank_order_id`, `active_status`, `order_type`, `paytype`) VALUES ( '" + req.body.cusid + "', '" + req.body.proid + "', '" + req.body.uprice + "', '" + req.body.rate + "', '" + req.body.bill_tot + "', '" + req.body.tot + "', '" + req.body.bank_order_id + "', '0', '2', '"+req.body.paytype+"' );",
+        mycon.execute("INSERT INTO `on_pay_details` ( `cus_id`, `pro_id`, `unit_price`, `bank_rate`, `bill_tot`, `tot`, `bank_order_id`, `active_status`, `order_type`, `paytype`) VALUES ( '" + req.body.cusid + "', '" + req.body.proid + "', '" + req.body.uprice + "', '" + req.body.rate + "', '" + req.body.bill_tot + "', '" + req.body.tot + "', '" + req.body.bank_order_id + "', '0', '2', '" + req.body.paytype + "' );",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -119,10 +119,9 @@ exports.bank = (req, res, next) => {
 
 exports.bankref = (req, res, next) => {
 
-    console.log(req.body.object);
-    console.log("xxxxxx");
+
     try {
-        mycon.execute("INSERT INTO `bank_ref` ( `metaid`, `refno`, `active_status`, `amount` , `uid` , `proid` ,`typeid`) VALUES ( '"+req.body.mid+"', '"+req.body.refno+"', '0', '"+req.body.amount+"', '"+req.body.uid+"' , '"+req.body.proid+"' ,'"+req.body.typeid+"' );",
+        mycon.execute("INSERT INTO `bank_ref` ( `metaid`, `refno`, `active_status`, `amount` , `uid` , `proid` ,`typeid`) VALUES ( '" + req.body.mid + "', '" + req.body.refno + "', '0', '" + req.body.amount + "', '" + req.body.uid + "' , '" + req.body.proid + "' ,'" + req.body.typeid + "' );",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -138,10 +137,9 @@ exports.bankref = (req, res, next) => {
 
 exports.getreflist = (req, res, next) => {
 
-    console.log(req.body.object);
-    console.log("xxxxxx");
+
     try {
-        mycon.execute("SELECT sw_prod.prodName, bank_ref.id, bank_ref.amount FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"' AND bank_ref.id IN ( SELECT MAX(bank_ref.id) FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"' )",
+        mycon.execute("SELECT sw_prod.prodName, bank_ref.id, bank_ref.amount FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '" + req.body.uid + "' AND bank_ref.id IN ( SELECT MAX(bank_ref.id) FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '" + req.body.uid + "' )",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -158,10 +156,9 @@ exports.getreflist = (req, res, next) => {
 
 exports.getreflistmore = (req, res, next) => {
 
-    console.log(req.body.object);
-    console.log("xxxxxx");
+
     try {
-        mycon.execute("SELECT sw_prod.prodName, bank_ref.id, bank_ref.amount FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '"+req.body.uid+"' AND bank_ref.id = '"+req.body.refid+"'",
+        mycon.execute("SELECT sw_prod.prodName, bank_ref.id, bank_ref.amount FROM bank_ref INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE bank_ref.active_status = '0' AND bank_ref.uid = '" + req.body.uid + "' AND bank_ref.id = '" + req.body.refid + "'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -179,7 +176,7 @@ exports.updateref = (req, res, next) => {
 
     console.log(req.body.object);
     try {
-        mycon.execute("UPDATE `bank_ref` SET `refno` = '"+req.body.refno+"', `active_status` = '1', `cus_sys_ref_no` = '"+req.body.sys_ref_no+"' WHERE (`id` = '"+req.body.id+"');",
+        mycon.execute("UPDATE `bank_ref` SET `refno` = '" + req.body.refno + "', `active_status` = '1', `cus_sys_ref_no` = '" + req.body.sys_ref_no + "' WHERE (`id` = '" + req.body.id + "');",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -235,7 +232,7 @@ exports.pendingpro_all = (req, res, next) => {
 
     console.log(req.body.object);
     try {
-        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value` AS valu, sw_prod.prodName, bank_ref.img_path, sw_prod.prodPrice, bank_ref.typeid, bank_ref.sys_ref_no, bank_ref.cus_sys_ref_no FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '1' AND bank_ref.id = '"+req.body.id+"'",
+        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value` AS valu, sw_prod.prodName, bank_ref.img_path, sw_prod.prodPrice, bank_ref.typeid, bank_ref.sys_ref_no, bank_ref.cus_sys_ref_no FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '1' AND bank_ref.id = '" + req.body.id + "'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -253,7 +250,7 @@ exports.com_all = (req, res, next) => {
 
     console.log(req.body.object);
     try {
-        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value` AS valu, sw_prod.prodName, bank_ref.img_path, sw_prod.prodPrice, bank_ref.typeid, bank_ref.sys_ref_no, bank_ref.cus_sys_ref_no FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '2' AND bank_ref.id = '"+req.body.id+"'",
+        mycon.execute("SELECT bank_ref.id, bank_ref.metaid, bank_ref.refno, bank_ref.active_status, bank_ref.amount, bank_ref.uid, bank_ref.proid, uservalue.`value` AS valu, sw_prod.prodName, bank_ref.img_path, sw_prod.prodPrice, bank_ref.typeid, bank_ref.sys_ref_no, bank_ref.cus_sys_ref_no FROM bank_ref INNER JOIN uservalue ON bank_ref.uid = uservalue.userId INNER JOIN sw_prod ON bank_ref.proid = sw_prod.idProd WHERE uservalue.keyId = '1' AND bank_ref.active_status = '2' AND bank_ref.id = '" + req.body.id + "'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -271,7 +268,7 @@ exports.completebankprocess = (req, res, next) => {
 
     console.log(req.body.object);
     try {
-        mycon.execute("UPDATE `bank_ref` SET `active_status` = '2' WHERE (`id` = '"+req.body.id+"');",
+        mycon.execute("UPDATE `bank_ref` SET `active_status` = '2' WHERE (`id` = '" + req.body.id + "');",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -286,10 +283,8 @@ exports.completebankprocess = (req, res, next) => {
 }
 
 exports.getidbymid = (req, res, next) => {
-
-    console.log(req.body.object);
     try {
-        mycon.execute("SELECT bank_ref.id FROM bank_ref WHERE bank_ref.metaid = '"+req.body.metid+"'",
+        mycon.execute("SELECT bank_ref.id FROM bank_ref WHERE bank_ref.metaid = '" + req.body.metid + "'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -303,12 +298,46 @@ exports.getidbymid = (req, res, next) => {
     }
 }
 
+exports.sendSMS = (req, res, next) => {
+    console.log(req.body);
+}
+
 
 exports.add_sys_ref = (req, res, next) => {
 
-    console.log(req.body.object);
+    console.log("+++++++++++++++++++++++++++");
+
+    var arr = req.body.obj.vlaues;
+    var mob = null;
+    var firstPay = req.body.obj.firstPay;
+    var product = req.body.obj.product;
+
+
+    arr.forEach(element => {
+        if (element.idUserKey == 10) {
+            mob = element;
+        }
+    });
+
+    console.log(mob.val);
+
+    var ref = req.body.refno;
+    var x = "Your system ref code is : " + ref + " " +
+        "Pay LKR. " + firstPay + ".00 to " +
+        "Product cord SWE " + product + " " +
+        "PV 01  " +
+        "PEOPLE'S BANK " +
+        "Kurunegala. " +
+        "Maliyadewa  Main Branch " +
+        "Smart Win Enterpreneur (PVT) LTD " +
+        "current Acc. No. 226100180063581";
+
+    console.log(x);
+
+    let param = { message: x, mob: mob.val }
+
     try {
-        mycon.execute("UPDATE `bank_ref` SET `sys_ref_no` = '"+req.body.refno+"' WHERE (`metaid` = '"+req.body.metid+"');",
+        mycon.execute("UPDATE `bank_ref` SET `sys_ref_no` = '" + req.body.refno + "' WHERE (`metaid` = '" + req.body.metid + "');",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -320,6 +349,7 @@ exports.add_sys_ref = (req, res, next) => {
         console.log(error);
         res.status(500).send(error);
     }
+    mg.smsSend(param);
 }
 
 
@@ -327,7 +357,7 @@ exports.del = (req, res, next) => {
 
     console.log(req.body.object);
     try {
-        mycon.execute("UPDATE `bank_ref` SET `active_status` = '9' WHERE (`id` = '"+req.body.id+"');",
+        mycon.execute("UPDATE `bank_ref` SET `active_status` = '9' WHERE (`id` = '" + req.body.id + "');",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -345,7 +375,7 @@ exports.refcount = (req, res, next) => {
 
     console.log(req.body.object);
     try {
-        mycon.execute("SELECT COUNT(bank_ref.refno) AS count FROM `bank_ref` WHERE bank_ref.refno = '"+req.body.refno+"'",
+        mycon.execute("SELECT COUNT(bank_ref.refno) AS count FROM `bank_ref` WHERE bank_ref.refno = '" + req.body.refno + "'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
