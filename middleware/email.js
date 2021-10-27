@@ -7,11 +7,11 @@ process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 
 var transporter = nodemailer.createTransport({
-    host: 'mail.smartwin.lk',
+    host: 'mail.smartwinent.com',
     port: 26,
     secure: false, // use SSL
     auth: {
-        user: 'info@smartwin.lk',
+        user: 'info@smartwinent.com',
         pass: 'swinfo@2021'
     }
 });
@@ -24,7 +24,7 @@ exports.emailSend = (param) => {
         let mailOptions = '';
         if (param.html) {
             mailOptions = {
-                from: 'info@smartwin.lk',
+                from: 'info@smartwinent.com',
                 to: param.to,
                 subject: param.subject,
                 text: param.message,
@@ -32,7 +32,7 @@ exports.emailSend = (param) => {
             }
         } else {
             mailOptions = {
-                from: 'info@smartwin.lk',
+                from: 'info@smartwinent.com',
                 to: param.to,
                 subject: param.subject,
                 text: param.message
@@ -69,37 +69,40 @@ exports.smsSend = (param) => {
     var pword = '';
     var link = '';
 
-    db.execute('SELECT sms_getting_setting.sms_setting_id,sms_getting_setting.sms_gatway_id,sms_getting_setting.sms_gatway_pwd,sms_getting_setting.sms_gatway_link FROM sms_getting_setting', (er, ro, fd) => {
-        if (!er) {
-            id = ro[0].sms_gatway_id;
-            pword = ro[0].sms_gatway_pwd;
-            link = ro[0].sms_gatway_link;
+    //  db.execute('SELECT sms_getting_setting.sms_setting_id,sms_getting_setting.sms_gatway_id,sms_getting_setting.sms_gatway_pwd,sms_getting_setting.sms_gatway_link FROM sms_getting_setting', (er, ro, fd) => {
+    //  if (!er) {
+    // id = ro[0].sms_gatway_id;
+    // pword = ro[0].sms_gatway_pwd;
+    // link = ro[0].sms_gatway_link;
 
-            console.log("sms send call");
+    console.log("sms send call");
 
-            console.log(param);
+    console.log(param);
 
-            let message = param.message;
-            let mobile = param.mob;
+    let message = param.message;
+    let mobile = param.mob;
 
-            console.log(" ----------------------------------- mobile : " + mobile)
-
-
-            // http://textit.biz/sendmsg/index.php?id=%2294753771770%22&password=%225400%22&text=%22Testing%22&to=%220702517628%22&from=%22SmartWin%22
+    console.log(" ----------------------------------- mobile : " + mobile)
 
 
-            http.get("" + link + "id=" + id + "&password=" + pword + "&text=" + message + "&to=" + mobile + "&from=SmartWin", function(err, res, body) {
-                if (err) {
-                    console.log("SMS  -------------- eroor on");
-                    console.log(body);
-                    // console.log(err);
-                } else {
-                    console.log("SMS Sent ---------------");
-                    console.log(body);
-                    // console.log(res);
-                }
-            });
+    // http://textit.biz/sendmsg/index.php?id=%2294753771770%22&password=%225400%22&text=%22Testing%22&to=%220702517628%22&from=%22SmartWin%22
 
+    //http://sms.airtel.lk:5000/sms/send_sms.php?username=smart_win&password=eTomfGJt7ZQ2ai&src=SMART%20WIN&dst=94702517628&msg=message eka methana type karanna&dr=1
+
+
+    // http.get("" + link + "id=" + id + "&password=" + pword + "&text=" + message + "&to=" + mobile + "&from=SmartWin", function(err, res, body) {
+    http.get("http://sms.airtel.lk:5000/sms/send_sms.php?username=smart_win&password=eTomfGJt7ZQ2ai&src=SMART%20WIN&dst=" + mobile + "&msg=" + message + "&dr=1", function(err, res, body) {
+        if (err) {
+            console.log("SMS  -------------- eroor on");
+            console.log(body);
+            // console.log(err);
+        } else {
+            console.log("SMS Sent ---------------");
+            console.log(body);
+            // console.log(res);
         }
     });
+
+    //  }
+    //  });
 }
