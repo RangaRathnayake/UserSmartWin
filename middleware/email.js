@@ -12,7 +12,7 @@ var transporter = nodemailer.createTransport({
     secure: false, // use SSL
     auth: {
         user: 'info@smartwinent.com',
-        pass: 'swinfo@2021'
+        pass: 'SmartWinEntInfo'
     }
 });
 
