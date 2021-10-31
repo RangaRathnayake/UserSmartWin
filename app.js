@@ -38,7 +38,9 @@ const allowedOrigins = [
     'http://smartwinent.com',
     'https://smartwinent.com',
     'http://sw.smartwinent.com',
-    'https://sw.smartwinent.com'
+    'https://sw.smartwinent.com',
+    'https://api.smartwinent.a2hosted.com',
+    'https://smartwin.smartwinent.a2hosted.com'
 
 ];
 
