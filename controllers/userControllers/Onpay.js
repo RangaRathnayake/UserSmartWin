@@ -322,9 +322,9 @@ exports.add_sys_ref = (req, res, next) => {
     console.log(mob.val);
 
     var ref = req.body.refno;
-    var x = "Your system ref code is : " + ref + " " +
+    var x = "Your system ref code is SR : " + ref + " " +
         "Pay LKR. " + firstPay + ".00 to " +
-        "Product cord SWE " + product + " " +
+        "Product cord SWE-" + product + " " +
         "PV 01  " +
         "PEOPLE'S BANK " +
         "Kurunegala. " +

@@ -6,7 +6,7 @@ var dateFormat = require('dateformat');
 
 
 exports.realEscapeString = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
         switch (char) {
             case "\0":
                 return "\\0";
@@ -25,7 +25,7 @@ exports.realEscapeString = (str) => {
             case "\\":
             case "%":
                 return "\\" + char; // prepends a backslash to backslash, percent,
-            // and double/single quotes
+                // and double/single quotes
         }
     });
 }
@@ -388,6 +388,7 @@ exports.setUserVal = (parm) => {
 exports.getDownTree = (req, res, next) => {
     try {
         let arr = [];
+
         function getNode(id) {
             mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.parentId AS pid,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=" + id,
                 (error, rows, fildData) => {
@@ -716,8 +717,7 @@ exports.addToTree = (param, res, next) => {
 
                                         if (param.side === 'A') {
                                             mycon.execute("UPDATE `sw_tree` SET `A`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
-                                                if (!errr) {
-                                                } else {
+                                                if (!errr) {} else {
                                                     console.log(errr);
                                                 }
                                             });
@@ -725,8 +725,7 @@ exports.addToTree = (param, res, next) => {
 
                                         if (param.side === 'B') {
                                             mycon.execute("UPDATE `sw_tree` SET `B`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
-                                                if (!errr) {
-                                                } else {
+                                                if (!errr) {} else {
                                                     console.log(errr);
                                                 }
                                             });
@@ -734,14 +733,14 @@ exports.addToTree = (param, res, next) => {
                                         let idA = null;
                                         let idB = null;
 
-                                        mycon.execute("INSERT INTO `sw_tree` ( `parentId`, `A`, `B`, `userId`, `commitionId`, `APoint`, `BPoint`, `layar`, `status`, `userName`, `other1`, `other2` )"
-                                            + "  VALUES ( " + treeId + ", NULL, NULL, " + param.uid + ", NULL, 0, 0, 0, 0, '../../../assets/img/x-button.png', 0, '0' )", (err, roo, fii) => {
+                                        mycon.execute("INSERT INTO `sw_tree` ( `parentId`, `A`, `B`, `userId`, `commitionId`, `APoint`, `BPoint`, `layar`, `status`, `userName`, `other1`, `other2` )" +
+                                            "  VALUES ( " + treeId + ", NULL, NULL, " + param.uid + ", NULL, 0, 0, 0, 0, '../../../assets/img/x-button.png', 0, '0' )", (err, roo, fii) => {
                                                 if (!err) {
                                                     idA = roo.insertId;
                                                     mycon.execute("UPDATE `sw_tree` SET `A`='" + idA + "' WHERE `swTreeId`=" + treeId, (errr, rooo, fiii) => {
                                                         if (!errr) {
-                                                            mycon.execute("INSERT INTO `sw_tree` ( `parentId`, `A`, `B`, `userId`, `commitionId`, `APoint`, `BPoint`, `layar`, `status`, `userName`, `other1`, `other2` )"
-                                                                + "  VALUES ( " + treeId + ", NULL, NULL, " + param.uid + ", NULL, 0, 0, 0, 0, '../../../assets/img/x-button.png', 0, '0' )", (err, roo, fii) => {
+                                                            mycon.execute("INSERT INTO `sw_tree` ( `parentId`, `A`, `B`, `userId`, `commitionId`, `APoint`, `BPoint`, `layar`, `status`, `userName`, `other1`, `other2` )" +
+                                                                "  VALUES ( " + treeId + ", NULL, NULL, " + param.uid + ", NULL, 0, 0, 0, 0, '../../../assets/img/x-button.png', 0, '0' )", (err, roo, fii) => {
                                                                     if (!err) {
                                                                         idB = roo.insertId;
                                                                         mycon.execute("UPDATE `sw_tree` SET `B`='" + idB + "' WHERE `swTreeId`=" + treeId, (errr, rooo, fiii) => {
@@ -830,16 +829,14 @@ exports.addOneToTree = (param, res, next) => {
 
                                         if (param.side === 'A') {
                                             mycon.execute("UPDATE `sw_tree` SET `A`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
-                                                if (!errr) {
-                                                } else {
+                                                if (!errr) {} else {
                                                     console.log(errr);
                                                 }
                                             });
                                         }
                                         if (param.side === 'B') {
                                             mycon.execute("UPDATE `sw_tree` SET `B`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
-                                                if (!errr) {
-                                                } else {
+                                                if (!errr) {} else {
                                                     console.log(errr);
                                                 }
                                             });
@@ -1135,11 +1132,3 @@ exports.addManualPoints = (req, res, next) => {
         res.status(500).send(error);
     }
 }
-
-
-
-
-
-
-
-

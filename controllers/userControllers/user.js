@@ -275,7 +275,7 @@ exports.sendLoginInformation = (uid) => {
                 console.log(mobile + ' -- ' + email + ' -- ' + name);
 
                 textMg += "Welcome to Smart Win Entrepreneur !" +
-                    "  Dear " + name + " your  SW No: " + uid + " and your verification number : " + val + "" +
+                    "  Dear " + name + " your  SW No: " + uid + " and your verification number : " + val + " Please visit sw.smartwinent.com T and C Apply. Far inquiry call 037 22 33 777 " +
                     "";
 
 
