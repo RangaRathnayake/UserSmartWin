@@ -136,7 +136,7 @@ exports.getCommitionExpenses = (req, res, next) => {
 
 exports.getbanreflist = (req, res, next) => {
     try {
-        mycon.execute("SELECT bank_ref.id, bank_ref.sys_ref_no AS refno FROM `bank_ref` WHERE bank_ref.uid = '"+req.body.uid+"' AND bank_ref.active_status = '0' AND bank_ref.sys_ref_no IS NOT NULL", (e, r, f) => {
+        mycon.execute("SELECT bank_ref.id,bank_ref.sys_ref_no AS refno FROM bank_ref WHERE bank_ref.uid='"+req.body.uid+"' AND bank_ref.active_status='0' AND bank_ref.sys_ref_no IS NOT NULL ORDER BY bank_ref.id DESC", (e, r, f) => {
             if (!e) {
                 res.send(r);
             }
