@@ -123,9 +123,20 @@ exports.getPointExpenses = (req, res, next) => {
 
 exports.getCommitionExpenses = (req, res, next) => {
     try {
-
-       
         mycon.execute("SELECT sw_introcommition.idIntrocommiton,Sum(sw_introcommition.amount) as amount,sw_process.dateTime,sw_process.idProcess FROM sw_introcommition INNER JOIN sw_process ON sw_introcommition.process_id=sw_process.idProcess WHERE sw_process.dateTime BETWEEN '" + req.body.from + "' AND '" + req.body.to + "' GROUP BY sw_process.idProcess ORDER BY sw_process.idProcess DESC", (e, r, f) => {
+            if (!e) {
+                res.send(r);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getbanreflist = (req, res, next) => {
+    try {
+        mycon.execute("SELECT bank_ref.id, bank_ref.refno FROM `bank_ref` WHERE bank_ref.uid = '"+req.body.uid+"' AND bank_ref.active_status = '0'", (e, r, f) => {
             if (!e) {
                 res.send(r);
             }
