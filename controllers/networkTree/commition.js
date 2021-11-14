@@ -78,8 +78,8 @@ exports.getProcessDate = (req, res, next) => {
 
 exports.updateProcessDate = (req, res, next) => {
     try {
-        var dd = dateFormat(req.body.day, "yyyy-mm-dd h:MM:ss");
-        mycon.execute("UPDATE `sw_process` SET `dateTime` = '" + dd + "' WHERE `idProcess` = " + req.body.id, (e, r, f) => {
+        // var dd = dateFormat(req.body.day, "yyyy-mm-dd h:MM:ss");
+        mycon.execute("UPDATE `sw_process` SET `dateTime` = '" + req.body.day + "' WHERE `idProcess` = " + req.body.id, (e, r, f) => {
             res.send(r);
         });
     } catch (error) {
