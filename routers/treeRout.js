@@ -27,6 +27,8 @@ router.post("/getAllPins", tree.getAllPins);
 router.post("/balancePoint", commition.balancePoint);
 router.post("/process", commition.process);
 router.get("/process", commition.process);
+router.post("/getProcessDate", commition.getProcessDate);
+router.post("/updateProcessDate", commition.updateProcessDate);
 router.post("/getProcess", commition.getProcess);
 router.post("/getPointCommitonList", commition.getPointCommitonList);
 router.post("/getPointCommitonListToTable", commition.getPointCommitonListToTable);

@@ -65,6 +65,28 @@ exports.balancePoint = (req, res, next) => {
 }
 
 
+exports.getProcessDate = (req, res, next) => {
+    try {
+        mycon.execute("SELECT sw_process.idProcess,sw_process.dateTime FROM sw_process WHERE sw_process.idProcess=" + req.body.id, (e, r, f) => {
+            res.send(r[0]);
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.updateProcessDate = (req, res, next) => {
+    try {
+        var dd = dateFormat(req.body.day, "yyyy-mm-dd h:MM:ss");
+        mycon.execute("UPDATE `sw_process` SET `dateTime` = '" + dd + "' WHERE `idProcess` = " + req.body.id, (e, r, f) => {
+            res.send(r);
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
 
 
 exports.process = (req, res, next) => {
