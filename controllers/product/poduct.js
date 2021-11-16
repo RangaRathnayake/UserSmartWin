@@ -7,7 +7,7 @@ const mg = require("../../middleware/email");
 
 
 exports.realEscapeString = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
         switch (char) {
             case "\0":
                 return "\\0";
@@ -26,7 +26,7 @@ exports.realEscapeString = (str) => {
             case "\\":
             case "%":
                 return "\\" + char; // prepends a backslash to backslash, percent,
-            // and double/single quotes
+                // and double/single quotes
         }
     });
 }
@@ -52,7 +52,7 @@ exports.getAllProduct = (req, res, next) => {
 exports.getprobyid = (req, res, next) => {
     try {
         mycon.execute(
-            "SELECT sw_prod.idProd, sw_prod.prodName, sw_prod.prodImage, sw_prod.prodPrice, sw_prod.prodPoint, sw_prod.prodOther, sw_prod.prodStatus FROM sw_prod WHERE sw_prod.idProd = '"+req.body.prodid+"'",
+            "SELECT sw_prod.idProd, sw_prod.prodName, sw_prod.prodImage, sw_prod.prodPrice, sw_prod.prodPoint, sw_prod.prodOther, sw_prod.prodStatus FROM sw_prod WHERE sw_prod.idProd = '" + req.body.prodid + "'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -85,7 +85,7 @@ exports.getAllProduct_in_online = (req, res, next) => {
 exports.getproductbyid = (req, res, next) => {
     try {
         mycon.execute(
-            "SELECT sw_prod.idProd, sw_prod.prodName, sw_prod.prodImage, sw_prod.prodPrice, sw_prod.prodPoint, sw_prod.prodOther, sw_prod.prodStatus, sw_prod.description FROM sw_prod WHERE sw_prod.idProd = '"+req.body.prodid+"'",
+            "SELECT sw_prod.idProd, sw_prod.prodName, sw_prod.prodImage, sw_prod.prodPrice, sw_prod.prodPoint, sw_prod.prodOther, sw_prod.prodStatus, sw_prod.description FROM sw_prod WHERE sw_prod.idProd = '" + req.body.prodid + "'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -102,7 +102,7 @@ exports.getproductbyid = (req, res, next) => {
 exports.moreimgbyproid = (req, res, next) => {
     try {
         mycon.execute(
-            "SELECT images.url1 FROM `images` WHERE images.pro_id = '"+req.body.prodid+"' AND images.`status` = '1'",
+            "SELECT images.url1 FROM `images` WHERE images.pro_id = '" + req.body.prodid + "' AND images.`status` = '1'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -205,7 +205,7 @@ exports.firstMessageBulk = (req, res, next) => {
 exports.getcount = (req, res, next) => {
     try {
         mycon.execute(
-            "SELECT IFNULL(COUNT(sw_prod.prodImage), 0) AS count FROM `sw_prod` WHERE sw_prod.idProd = '"+req.body.prodid+"'",
+            "SELECT IFNULL(COUNT(sw_prod.prodImage), 0) AS count FROM `sw_prod` WHERE sw_prod.idProd = '" + req.body.prodid + "'",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -288,56 +288,56 @@ exports.bulsSendingMethod = (data) => {
 
 exports.sendMassage = (req, res, next) => {
     try {
-        var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+        // var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+        // mycon.execute(
+        //     "INSERT INTO `sw_prod_issuing` (`user_id`,`tid_id`,`prod_id`,`date`,`comment`,`status`,`status_text`) " +
+        //     " VALUES ('" +
+        //     req.body.uid +
+        //     "','" +
+        //     req.body.tid +
+        //     "','" +
+        //     req.body.prodid +
+        //     "','" +
+        //     day +
+        //     "','" +
+        //     req.body.msg +
+        //     "','" +
+        //     req.body.status +
+        //     "','" +
+        //     req.body.sttext +
+        //     "')",
+        //     (error, rows, fildData) => {
+        //         if (!error) {
+        //             res.send(rows);
+
+        // if (userid != req.body.uid) {
+
         mycon.execute(
-            "INSERT INTO `sw_prod_issuing` (`user_id`,`tid_id`,`prod_id`,`date`,`comment`,`status`,`status_text`) " +
-            " VALUES ('" +
+            "SELECT uservalue.`value`,userkey.`key` FROM uservalue INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.userId= '" +
             req.body.uid +
-            "','" +
-            req.body.tid +
-            "','" +
-            req.body.prodid +
-            "','" +
-            day +
-            "','" +
-            req.body.msg +
-            "','" +
-            req.body.status +
-            "','" +
-            req.body.sttext +
-            "')",
-            (error, rows, fildData) => {
-                if (!error) {
-                    res.send(rows);
+            "' AND (uservalue.keyId=22 OR uservalue.keyId=9) ORDER BY userkey.keyOder ASC",
+            (e, r, f) => {
+                if (!e) {
+                    userid = req.body.uid;
 
-                    // if (userid != req.body.uid) {
+                    mg.emailSend({
+                        to: r[1].value,
+                        subject: "Smart Win Entrepreneur",
+                        message: req.body.msg,
+                    });
 
-                    mycon.execute(
-                        "SELECT uservalue.`value`,userkey.`key` FROM uservalue INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.userId= '" +
-                        req.body.uid +
-                        "' AND (uservalue.keyId=22 OR uservalue.keyId=9) ORDER BY userkey.keyOder ASC",
-                        (e, r, f) => {
-                            if (!e) {
-                                userid = req.body.uid;
-
-                                mg.emailSend({
-                                    to: r[1].value,
-                                    subject: "Smart Win Entrepreneur",
-                                    message: req.body.msg,
-                                });
-
-                                mg.smsSend({ mob: r[0].value, message: req.body.msg });
-                            } else {
-                                console.log(e);
-                            }
-                        }
-                    );
-                    // }
+                    mg.smsSend({ mob: r[0].value, message: req.body.msg });
                 } else {
-                    console.log(error);
+                    console.log(e);
                 }
             }
         );
+        // }
+        //     } else {
+        //         console.log(error);
+        //     }
+        // }
+        //     );
     } catch (error) {
         console.log(error);
         res.status(500).send(error);
@@ -553,6 +553,7 @@ exports.block = (req, res, next) => {
                 res.send(ro);
                 var le = ro.length;
                 var x = 0;
+
                 function recall() {
                     console.log(x);
                     mycon.execute("UPDATE `user` SET `utypeId`=5 WHERE `idUser`=" + ro[x].userId,
@@ -721,4 +722,3 @@ exports.getProdCat = (req, res, next) => {
         res.status(500).send(error);
     }
 };
-

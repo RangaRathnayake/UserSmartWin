@@ -13,7 +13,7 @@ exports.getAllInvoice = (req, res, next) => {
                     res.send(rows);
 
 
-                    
+
                 }
             });
     } catch (error) {
@@ -74,7 +74,7 @@ exports.newInvoice = (req, res, next) => {
 
 exports.getInvoiceData = (req, res, next) => {
     try {
-        mycon.execute("SELECT sw_invoice.idInvoice,sw_invoice.date,sw_invoice.userId,sw_invoice.totalValue,sw_invoice.productId,sw_invoice.pin,uservalue.keyId,uservalue.`value`,userkey.`key` FROM sw_invoice INNER JOIN uservalue ON uservalue.userId=sw_invoice.userId INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE sw_invoice.idInvoice=" + req.body.id + " ORDER BY userkey.keyOder ASC",
+        mycon.execute("SELECT sw_invoice.idInvoice,sw_invoice.date,sw_invoice.userId,sw_invoice.totalValue,sw_invoice.productId,sw_invoice.pin,uservalue.keyId,uservalue.`value`,userkey.`key`,sw_prod.prodName FROM sw_invoice INNER JOIN uservalue ON uservalue.userId=sw_invoice.userId INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey INNER JOIN sw_prod ON sw_prod.idProd=sw_invoice.productId WHERE sw_invoice.idInvoice=" + req.body.id + " ORDER BY userkey.keyOder ASC",
             (error, rows, fildData) => {
                 if (!error) {
                     res.send(rows);
@@ -136,7 +136,7 @@ exports.getCommitionExpenses = (req, res, next) => {
 
 exports.getbanreflist = (req, res, next) => {
     try {
-        mycon.execute("SELECT bank_ref.id,bank_ref.sys_ref_no AS refno FROM bank_ref WHERE bank_ref.uid='"+req.body.uid+"' AND bank_ref.active_status='0' AND bank_ref.sys_ref_no IS NOT NULL ORDER BY bank_ref.id DESC", (e, r, f) => {
+        mycon.execute("SELECT bank_ref.id,bank_ref.sys_ref_no AS refno FROM bank_ref WHERE bank_ref.uid='" + req.body.uid + "' AND bank_ref.active_status='0' AND bank_ref.sys_ref_no IS NOT NULL ORDER BY bank_ref.id DESC", (e, r, f) => {
             if (!e) {
                 res.send(r);
             }
@@ -146,4 +146,3 @@ exports.getbanreflist = (req, res, next) => {
         res.status(500).send(error);
     }
 }
-

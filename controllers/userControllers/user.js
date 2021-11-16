@@ -362,7 +362,7 @@ exports.getTreeId = (req, res, next) => {
 
 exports.getUsersList = (req, res, next) => {
     try {
-        mycon.execute("SELECT `user`.idUser,uservalue.`value` FROM `user` INNER JOIN uservalue ON uservalue.userId=`user`.idUser INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.keyId=2 ORDER BY `user`.idUser ASC", (er, ro, fi) => {
+        mycon.execute("SELECT `user`.idUser,uservalue.`value`,DATE(`user`.dateTime) AS DAY FROM `user` INNER JOIN uservalue ON uservalue.userId=`user`.idUser INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.keyId=2 ORDER BY `user`.idUser ASC", (er, ro, fi) => {
             if (!er) {
                 res.send(ro);
             }
