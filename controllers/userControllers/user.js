@@ -33,6 +33,33 @@ exports.realEscapeString = (str) => {
 }
 
 
+exports.rss = (str) => {
+    if (str) {
+        return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+            switch (char) {
+                case "\0":
+                    return "\\0";
+                case "\x08":
+                    return "\\b";
+                case "\x09":
+                    return "\\t";
+                case "\x1a":
+                    return "\\z";
+                case "\n":
+                    return "\\n";
+                case "\r":
+                    return "\\r";
+                case "\"":
+                case "'":
+                case "\\":
+                case "%":
+                    return "\\" + char; // prepends a backslash to backslash, percent,
+                    // and double/single quotes
+            }
+        });
+    } else { return 'NULL' }
+}
+
 
 
 // getAllUsers 
@@ -275,7 +302,7 @@ exports.sendLoginInformation = (uid) => {
                 console.log(mobile + ' -- ' + email + ' -- ' + name);
 
                 textMg += "Welcome to Smart Win Entrepreneur !" +
-                    "  Dear " + name + " your  SW No: " + uid + " and your verification number : " + val + " Please visit sw.smartwinent.com T and C Apply. Far inquiry call 037 22 33 777 " +
+                    "  Dear " + name + " your  SW No: " + uid + " and your verification number : " + val + " Please visit sw.smartwinent.com T and C Apply. Far inquiry call 037 22 34 777 " +
                     "";
 
 
@@ -576,6 +603,267 @@ exports.bankCodeBranchCode = (req, res, next) => {
                     getvalues();
                 }
             });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.findByNic = (req, res, next) => {
+    try {
+        mycon.execute("SELECT uservalue.idUserValue,uservalue.userId,uservalue.keyId,uservalue.`value`,uservalue.valueStatus FROM uservalue WHERE uservalue.keyId=21 AND uservalue.`value`='" + req.body.nic + "'", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.formOne = (req, res, next) => {
+    try {
+        var day = dateFormat(new Date(), "yyyy-mm-dd");
+        var dd = dateFormat(new Date(), "yymmdd");
+        mycon.execute("INSERT INTO `refaral` (`ref`,`iSWno`,`namewith`,`nic`,`address`,`mobile`,`payType`,`status`,`userId`,`day`,`product`,`price`) VALUES (''," + req.body.iSWno + ",'" + this.realEscapeString(req.body.name) + "','" + req.body.nic + "','" + this.realEscapeString(req.body.address) + "','" + req.body.mobile + "','" + req.body.type + "',0," + req.body.userId + ",'" + day + "','" + req.body.product + "','" + req.body.price + "')", (er, ro, fi) => {
+            if (!er) {
+                console.log(ro.insertId);
+                var ref = dd + "" + ro.insertId;
+                mycon.execute("UPDATE `refaral` SET `ref`='" + ref + "' WHERE `id`=" + ro.insertId, (e, r, n) => {
+                    if (!e) {
+                        var textMg = "Your System Ref Code is : SR " + ref + " Product Cord SWE-" + req.body.product + " PV- 01 Pay LKR. " + req.body.price + " Sampath Bank Kurunegala Super Branch Smart Win Enterpreneur (Privet) Limited current Acc. No. 000610016871 T and C Apply. Far inquiry call 0372234777'";
+                        mg.smsSend({ mob: req.body.mobile, message: textMg });
+                        res.send({ SR: ref, id: ro.insertId });
+
+                    } else { res.send(e) }
+                });
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.getMyref = (req, res, next) => {
+    try {
+        mycon.execute("SELECT refaral.id,refaral.ref,refaral.iSWno,refaral.namewith,refaral.nic,refaral.address,refaral.mobile,refaral.payType,refaral.`status`,refaral.userId,refaral.`day`,refaral.product,refaral.price FROM refaral WHERE refaral.userId=" + req.body.uid + " AND refaral.`status`=" + req.body.status + " AND refaral.payType = '" + req.body.type + "'  ORDER BY refaral.id DESC", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getOneRef = (req, res, next) => {
+    try {
+        mycon.execute("SELECT refaral.id,refaral.ref,refaral.iSWno,refaral.namewith,refaral.nic,refaral.address,refaral.mobile,refaral.payType,refaral.`status`,refaral.userId,refaral.`day`,refaral.product,refaral.price FROM refaral WHERE refaral.id=" + req.body.id, (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getAllBank = (req, res, next) => {
+    try {
+        mycon.execute("SELECT bank.`code`,bank.`name` FROM bank", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getBranch = (req, res, next) => {
+    try {
+        mycon.execute("SELECT branch.b_co,branch.br_code,branch.br_name FROM branch WHERE branch.b_co='" + req.body.bcode + "'", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.addCoreLeader = (req, res, next) => {
+    try {
+        mycon.execute("INSERT INTO  `leader_main`(  `main`, `name`) VALUES (  '" + req.body.muid + "', '" + req.body.name + "')", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getCoreLeaders = (req, res, next) => {
+    try {
+        mycon.execute("SELECT leader_main.id,leader_main.main,leader_main.`name` FROM leader_main", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.addKeyLeader = (req, res, next) => {
+    try {
+        mycon.execute("INSERT INTO `leader_key`(  `mid`, `key`, `name`) VALUES (  " + req.body.mid + ", " + req.body.kuid + ", '" + req.body.kname + "')", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getKeyLeaders = (req, res, next) => {
+    try {
+        mycon.execute("SELECT leader_key.id,leader_key.mid,leader_key.`key`,leader_key.`name` FROM leader_key WHERE leader_key.mid=" + req.body.mid, (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.updateRefData = (req, res, next) => {
+    try {
+        mycon.execute("UPDATE `refaral` SET `status`=" + req.body.status + ",`aPin`=" + req.body.aPin + ",`aPinUid`=" + req.body.aPinUid + ",`side`='" + req.body.side + "',`otherint1`='" + req.body.otherint1 + "',`otherint2`='" + req.body.otherint2 + "',`otherstring1`='" + req.body.otherstring1 + "',`otherstring2`='" + req.body.otherstring2 + "' WHERE `id`=" + req.body.ref, (er, ro, fi) => {
+            if (!er) {
+                req.body.vlaues.forEach(element => {
+                    mycon.execute("INSERT INTO  `temp_data`(  `refaral`, `key`, `value`, `status`) VALUES (  " + req.body.ref + ", '" + element.idUserKey + "', '" + this.rss(element.val) + "', 1)", (e, r, f) => {
+                        if (e) {
+                            console.log(e);
+                        }
+                    })
+                });
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.allBankRef = (req, res, next) => {
+    try {
+        mycon.execute("SELECT refaral.id,refaral.ref,refaral.iSWno,refaral.namewith,refaral.nic,refaral.address,refaral.mobile,refaral.payType,refaral.`status`,refaral.userId,refaral.`day`,refaral.product,refaral.price,refaral.imagePath,refaral.bankRef,refaral.aPin,refaral.aPinUid,refaral.side,refaral.otherint1,refaral.otherint2,refaral.otherstring1,refaral.otherstring2 FROM refaral WHERE refaral.`status`=" + req.body.status + " AND refaral.payType='b' ORDER BY refaral.id ASC", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.rejectBankPros = (req, res, next) => {
+    try {
+        mycon.execute("UPDATE `refaral` SET `status`=3 WHERE `id`=" + req.body.ref, (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.completeBankPros = (req, res, next) => {
+    try {
+        mycon.execute("UPDATE `refaral` SET `status`=2 WHERE `id`=" + req.body.ref, (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.getBankRefarance = (req, res, next) => {
+    try {
+        mycon.execute("SELECT refaral.id,refaral.ref,refaral.iSWno,refaral.namewith,refaral.nic,refaral.address,refaral.mobile,refaral.payType,refaral.`status`,refaral.userId,refaral.`day`,refaral.product,refaral.price,refaral.imagePath,refaral.bankRef,refaral.aPin,refaral.aPinUid,refaral.side,refaral.otherint1,refaral.otherint2,refaral.otherstring1,refaral.otherstring2 FROM refaral WHERE refaral.id=" + req.body.ref, (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+exports.getTempData = (req, res, next) => {
+    try {
+        mycon.execute("SELECT temp_data.id,temp_data.refaral,temp_data.`key` as idUserKey,temp_data.`value` as val,temp_data.`status` FROM temp_data WHERE temp_data.refaral=" + req.body.ref + "", (er, ro, fi) => {
+            if (!er) {
+                res.send(ro);
+            } else {
+                console.log(er);
+            }
+        });
     } catch (error) {
         console.log(error);
         res.status(500).send(error);

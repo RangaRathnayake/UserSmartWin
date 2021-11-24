@@ -30,6 +30,35 @@ exports.realEscapeString = (str) => {
     });
 }
 
+exports.res = (str) => {
+    if (str) {
+        return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+            switch (char) {
+                case "\0":
+                    return "\\0";
+                case "\x08":
+                    return "\\b";
+                case "\x09":
+                    return "\\t";
+                case "\x1a":
+                    return "\\z";
+                case "\n":
+                    return "\\n";
+                case "\r":
+                    return "\\r";
+                case "\"":
+                case "'":
+                case "\\":
+                case "%":
+                    return "\\" + char; // prepends a backslash to backslash, percent,
+                    // and double/single quotes
+            }
+        });
+    } else {
+        return null;
+    }
+}
+
 exports.getFullTree = (req, res, next) => {
     try {
         mycon.execute("SELECT sw_tree.swTreeId AS id,sw_tree.swTreeId AS title,sw_tree.parentId AS pid,sw_tree.A,sw_tree.B,sw_tree.userId,sw_tree.APoint,sw_tree.BPoint,sw_tree.layar,sw_tree.`status`,sw_tree.userName AS img,sw_tree.other1,sw_tree.other2,`user`.idUser as point,`user`.email,uservalue.`value` AS name,uservalue.keyId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2",
@@ -327,7 +356,17 @@ exports.newNode = (req, res, next) => {
             });
 
         } else {
-            mycon.execute("INSERT INTO `user` (  `status`, `dateTime`, `utypeId` ) VALUES (0, '" + day + "', 4 )", (ee, rr, ff) => {
+
+            var main = 0;
+            var key = 0;
+            if (req.body.otherint1) {
+                main = req.body.otherint1;
+            }
+            if (req.body.otherint2) {
+                key = req.body.otherint2;
+            }
+
+            mycon.execute("INSERT INTO `user` (  `status`, `dateTime`, `utypeId`,`maincore`,`keyleader` ) VALUES (0, '" + day + "', 4, " + main + "," + key + " )", (ee, rr, ff) => {
                 if (!ee) {
                     userID = rr.insertId;
                     b.vlaues.forEach(e => {
@@ -373,7 +412,7 @@ exports.newNode = (req, res, next) => {
 
 
 exports.setUserVal = (parm) => {
-    let q = "INSERT INTO  `uservalue`(  `userId`, `keyId`, `value`, `valueStatus`) VALUES (  " + parm.uid + ",  " + parm.key + " , '" + this.realEscapeString(parm.val) + "', 1)";
+    let q = "INSERT INTO  `uservalue`(  `userId`, `keyId`, `value`, `valueStatus`) VALUES (  " + parm.uid + ",  " + parm.key + " , '" + this.res(parm.val) + "', 1)";
     mycon.execute(q, (er, ro, fi) => {
         if (!er) {
             return;

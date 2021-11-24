@@ -48,4 +48,36 @@ router.post("/sendBulkSms", user.sendBulkSms);
 
 router.post("/bankCodeBranchCode", user.bankCodeBranchCode);
 
+router.post("/findByNic", user.findByNic);
+
+router.post("/formOne", user.formOne);
+
+router.post("/getMyref", user.getMyref);
+
+router.post("/getOneRef", user.getOneRef);
+
+router.post("/getAllBank", user.getAllBank);
+
+router.post("/getBranch", user.getBranch);
+
+router.post("/addCoreLeader", user.addCoreLeader);
+
+router.post("/getCoreLeaders", user.getCoreLeaders);
+
+router.post("/addKeyLeader", user.addKeyLeader);
+
+router.post("/getKeyLeaders", user.getKeyLeaders);
+
+router.post("/updateRefData", user.updateRefData);
+
+router.post("/allBankRef", user.allBankRef);
+
+router.post("/rejectBankPros", user.rejectBankPros);
+
+router.post("/completeBankPros", user.completeBankPros);
+
+router.post("/getBankRefarance", user.getBankRefarance);
+
+router.post("/getTempData", user.getTempData);
+
 module.exports = router;
