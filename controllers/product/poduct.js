@@ -7,7 +7,7 @@ const mg = require("../../middleware/email");
 
 
 exports.realEscapeString = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
         switch (char) {
             case "\0":
                 return "\\0";
@@ -26,7 +26,7 @@ exports.realEscapeString = (str) => {
             case "\\":
             case "%":
                 return "\\" + char; // prepends a backslash to backslash, percent,
-                // and double/single quotes
+            // and double/single quotes
         }
     });
 }
@@ -288,7 +288,7 @@ exports.bulsSendingMethod = (data) => {
 
 exports.sendMassage = (req, res, next) => {
     try {
-        // var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
+        var day = dateFormat(new Date(), "yyyy-mm-dd h:MM:ss");
         // mycon.execute(
         //     "INSERT INTO `sw_prod_issuing` (`user_id`,`tid_id`,`prod_id`,`date`,`comment`,`status`,`status_text`) " +
         //     " VALUES ('" +
@@ -327,6 +327,13 @@ exports.sendMassage = (req, res, next) => {
                     });
 
                     mg.smsSend({ mob: r[0].value, message: req.body.msg });
+
+                    mycon.execute("INSERT INTO `sms_histry`( `uid`, `pin`, `date`, `sms`, `status`) VALUES ( " + userid + ", " + req.body.tid + ", '" + day + "', '" + this.realEscapeString(req.body.msg) + "', 1)", (ee, rr, ff) => {
+                        if (!ee) {
+                            res.send(rr)
+                        }
+                    });
+
                 } else {
                     console.log(e);
                 }
@@ -343,6 +350,28 @@ exports.sendMassage = (req, res, next) => {
         res.status(500).send(error);
     }
 };
+
+
+exports.getSMShistry = (req, res, next) => {
+    try {
+        mycon.execute(
+            "SELECT sms_histry.id,sms_histry.uid,sms_histry.pin,sms_histry.date,sms_histry.sms,sms_histry.`status` FROM sms_histry WHERE  sms_histry.pin=" + req.body.tid,
+            (error, rows, fildData) => {
+                if (!error) {
+                    res.send(rows);
+                } else {
+                    console.log(error);
+                }
+            }
+        );
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+};
+
+
+
 
 exports.getAllSent = (req, res, next) => {
     try {
