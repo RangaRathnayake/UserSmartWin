@@ -302,7 +302,7 @@ exports.sendLoginInformation = (uid) => {
                 console.log(mobile + ' -- ' + email + ' -- ' + name);
 
                 textMg += "Welcome to Smart Win Entrepreneur !" +
-                    "  Dear " + name + " your  SW No: " + uid + " and your verification number : " + val + " Please visit www.smartwinent.com and join smart win Telegram group https://shorturl.at/goDNV T and C Apply. Far inquiry call Tel. 037 22 34 777 WhatsApp 07 55 44 33 99" +
+                    "  Dear " + name + " your  SW No: " + uid + " and your verification number : " + val + " Please visit www.smartwinent.com and join smart win Telegram group https://bit.ly/3muQJRO T and C Apply. Far inquiry call Tel. 037 22 34 777 WhatsApp 07 55 44 33 99" +
                     "";
 
 
