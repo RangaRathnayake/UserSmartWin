@@ -302,7 +302,7 @@ exports.sendLoginInformation = (uid) => {
                 console.log(mobile + ' -- ' + email + ' -- ' + name);
 
                 textMg += "Welcome to Smart Win Entrepreneur !" +
-                    "  Dear " + name + " your  SW No: " + uid + " and your verification number : " + val + " Please visit www.smartwinent.com and join smart win Telegram group https://bit.ly/3muQJRO T and C Apply. Far inquiry call Tel. 037 22 34 777 WhatsApp 07 55 44 33 99" +
+                    "  Dear " + name + " your  SW No: " + uid + " and your verification number : " + val + " Please visit www.smartwinent.com and join smart win Telegram group https://bit.ly/3muQJRO  It is imperative to get rid of the product or service you have ordered from smart win within 30 days. (ඔබ විසින් ඇනවුම් කරනලද නිෂ්පාදනය හෝ සේවාව දින 30 ක් ඇතුලත smart win ආයතනයෙන් නිදහස් කරගැනිමට අනිවර්‍ය්යෙන්ම කටයුතු කලයුතු වේ) T and C Apply. Far inquiry call Tel. 037 22 34 777 WhatsApp / Telegram 0755443399" +
                     "";
 
 
@@ -634,7 +634,7 @@ exports.formOne = (req, res, next) => {
                 var ref = dd + "" + ro.insertId;
                 mycon.execute("UPDATE `refaral` SET `ref`='" + ref + "' WHERE `id`=" + ro.insertId, (e, r, n) => {
                     if (!e) {
-                        var textMg = "Your System Ref Code is : SR " + ref + " Product Cord SWE-" + req.body.product + " PV- 01 Pay LKR. " + req.body.price + " Sampath Bank Kurunegala Super Branch Smart Win Enterpreneur (Privet) Limited current Acc. No. 000610016871 T and C Apply. Far inquiry call 0372234777'";
+                        var textMg = "Your System Ref Code is : SR " + ref + " Product Cord SWE-" + req.body.product + " PV- 01 Pay LKR. " + req.body.price + " Sampath Bank Kurunegala Super Branch Smart Win Enterpreneur (Privet) Limited current Acc. No. 000610016871 It is imperative to get rid of the product or service you have ordered from smart win within 30 days. (ඔබ විසින් ඇනවුම් කරනලද නිෂ්පාදනය හෝ සේවාව දින 30 ක් ඇතුලත smart win ආයතනයෙන් නිදහස් කරගැනිමට අනිවර්‍ය්යෙන්ම කටයුතු කලයුතු වේ) T and C Apply. Far inquiry call 0372234777 WhatsApp / Telegram 0755443399'";
                         mg.smsSend({ mob: req.body.mobile, message: textMg });
                         res.send({ SR: ref, id: ro.insertId });
 

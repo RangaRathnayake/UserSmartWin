@@ -117,6 +117,7 @@ exports.processA = (req, res, next, r) => {
 
 
                 r.forEach(el => {
+                    console.log(x);
                     x++;
                     let tid = el.swTreeId;
                     let comid = el.commitionId;
@@ -157,6 +158,7 @@ exports.processA = (req, res, next, r) => {
 }
 
 exports.processB = (req, res, next, d) => {
+    console.log("processB");
     try {
         if (d.ap > 0 && d.bp > 0) {
             //   console.log(d.tid + "  -  " + d.ap + "  - " + d.bp + " --- " + d.proid + "-----" + d.uid);
@@ -223,7 +225,7 @@ exports.processB = (req, res, next, d) => {
 
 
 exports.processC = (req, res, next, d) => {
-
+    console.log("processC");
     try {
         mycon.execute("INSERT INTO  `sw_pointcommition`(  `user_id`, `tree_id`, `commition_id`, `process_id`, `amount`, `status`)" +
             " VALUES (  '" + d.uid + "', '" + d.tid + "', '" + d.comid + "', '" + d.prosid + "', '" + d.amount + "', 1)", (ee, rr, ff) => {
@@ -267,6 +269,7 @@ exports.processC = (req, res, next, d) => {
 
 
 exports.processD = (req, res, next, d) => {
+    console.log("processD");
     try {
 
         let obj = {
@@ -334,6 +337,7 @@ exports.processD = (req, res, next, d) => {
 }
 
 exports.processE = (req, res, next, d) => {
+    console.log("processE");
     try {
         mycon.execute("UPDATE `sw_point` SET `status`= 2,`process_id`= '" + d.prosid + "',`pointcom_id`= '" + d.pintcom + "' WHERE `idPoint`=" + d.pid, (e, r, f) => {
             if (!e) {

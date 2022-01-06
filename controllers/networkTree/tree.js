@@ -6,7 +6,7 @@ var dateFormat = require('dateformat');
 
 
 exports.realEscapeString = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
         switch (char) {
             case "\0":
                 return "\\0";
@@ -25,14 +25,14 @@ exports.realEscapeString = (str) => {
             case "\\":
             case "%":
                 return "\\" + char; // prepends a backslash to backslash, percent,
-                // and double/single quotes
+            // and double/single quotes
         }
     });
 }
 
 exports.res = (str) => {
     if (str) {
-        return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+        return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
             switch (char) {
                 case "\0":
                     return "\\0";
@@ -51,7 +51,7 @@ exports.res = (str) => {
                 case "\\":
                 case "%":
                     return "\\" + char; // prepends a backslash to backslash, percent,
-                    // and double/single quotes
+                // and double/single quotes
             }
         });
     } else {
@@ -758,7 +758,7 @@ exports.addToTree = (param, res, next) => {
 
                                         if (param.side === 'A') {
                                             mycon.execute("UPDATE `sw_tree` SET `A`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
-                                                if (!errr) {} else {
+                                                if (!errr) { } else {
                                                     console.log(errr);
                                                 }
                                             });
@@ -766,7 +766,7 @@ exports.addToTree = (param, res, next) => {
 
                                         if (param.side === 'B') {
                                             mycon.execute("UPDATE `sw_tree` SET `B`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
-                                                if (!errr) {} else {
+                                                if (!errr) { } else {
                                                     console.log(errr);
                                                 }
                                             });
@@ -870,14 +870,14 @@ exports.addOneToTree = (param, res, next) => {
 
                                         if (param.side === 'A') {
                                             mycon.execute("UPDATE `sw_tree` SET `A`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
-                                                if (!errr) {} else {
+                                                if (!errr) { } else {
                                                     console.log(errr);
                                                 }
                                             });
                                         }
                                         if (param.side === 'B') {
                                             mycon.execute("UPDATE `sw_tree` SET `B`='" + treeId + "' WHERE `swTreeId`=" + param.parent, (errr, rooo, fiii) => {
-                                                if (!errr) {} else {
+                                                if (!errr) { } else {
                                                     console.log(errr);
                                                 }
                                             });
@@ -1168,6 +1168,21 @@ exports.addManualPoints = (req, res, next) => {
 
 
 
+    } catch (error) {
+        console.log(error);
+        res.status(500).send(error);
+    }
+}
+
+
+exports.isMy = (req, res, next) => {
+    try {
+        console.log(req.body);
+        mycon.execute("SELECT sw_tree.swTreeId,sw_tree.parentId,sw_tree.A,sw_tree.B FROM sw_tree WHERE sw_tree.userId=1", (e, r, f) => {
+            if(!e){
+                res.send(r);
+            }
+        });       
     } catch (error) {
         console.log(error);
         res.status(500).send(error);

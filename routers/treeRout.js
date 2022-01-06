@@ -42,6 +42,7 @@ router.post("/getPointCommitionById", commition.getPointCommitionById);
 
 
 router.post("/addManualPoints", tree.addManualPoints);
+router.post("/isMy", tree.isMy)
 
 
 
