@@ -8,7 +8,7 @@ const { getPrivilagesByUserType } = require('./privilege');
 
 
 exports.realEscapeString = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
         switch (char) {
             case "\0":
                 return "\\0";
@@ -27,7 +27,7 @@ exports.realEscapeString = (str) => {
             case "\\":
             case "%":
                 return "\\" + char; // prepends a backslash to backslash, percent,
-                // and double/single quotes
+            // and double/single quotes
         }
     });
 }
@@ -35,7 +35,7 @@ exports.realEscapeString = (str) => {
 
 exports.rss = (str) => {
     if (str) {
-        return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+        return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
             switch (char) {
                 case "\0":
                     return "\\0";
@@ -54,7 +54,7 @@ exports.rss = (str) => {
                 case "\\":
                 case "%":
                     return "\\" + char; // prepends a backslash to backslash, percent,
-                    // and double/single quotes
+                // and double/single quotes
             }
         });
     } else { return 'NULL' }
@@ -138,14 +138,14 @@ exports.userLogin = (req, res, next) => {
                             if (result) {
 
                                 const token = jwt.sign({
-                                        uid: user.idUser,
-                                        email: user.email,
-                                        mobile: user.mobileno,
-                                        uType: user.utypeId
-                                    },
+                                    uid: user.idUser,
+                                    email: user.email,
+                                    mobile: user.mobileno,
+                                    uType: user.utypeId
+                                },
                                     process.env.JWT_KEY, {
-                                        expiresIn: "1h"
-                                    },
+                                    expiresIn: "1h"
+                                },
                                 );
                                 return res.status(200).json({
                                     mg: "Auth Successfull",
@@ -634,9 +634,12 @@ exports.formOne = (req, res, next) => {
                 var ref = dd + "" + ro.insertId;
                 mycon.execute("UPDATE `refaral` SET `ref`='" + ref + "' WHERE `id`=" + ro.insertId, (e, r, n) => {
                     if (!e) {
+                        //Main
+
+
 
                         var textMg = "Your System Ref Code is : SR " + ref + " Product Cord SWE-" + req.body.product + " PV- 01 Pay LKR. " + req.body.price + " Sampath Bank Kurunegala Super Branch Smart Win Enterpreneur (Privet) Limited current Acc. No. 000610016871. PEOPLES BANK Kurunegala maliyadewa  main Branch Acc: 226 100 1800 63581 ඉහත සදහන් බැංකු ගිණුම් වලින් ඔබට පහසු ගිණුමකට මුදල් තැන්පත්කල හැකි අතර මුදල් තැන්පත් කිරිමේදි තැන්පතු පතේ මුදල් තැන්පත් කිරිමට හේතුව  තිරුවේ SR අංකය සදහන් කරන්න  සම්පත් බැංකුවේ ගිණුමට මුදල් තැන්පත් කිරිමේදි පමණක් CDM යන්ත්‍රයෙන් මුදල් තැන්පත්කල හැකි අතර එවිට Reference යටතේ  SR අංකය සටහන් කරන්න.";
-                     
+
                         mg.smsSend({ mob: req.body.mobile, message: textMg });
                         res.send({ SR: ref, id: ro.insertId });
 
