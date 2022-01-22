@@ -91,7 +91,7 @@ exports.smsSend = (param) => {
 
 
     // http.get("" + link + "id=" + id + "&password=" + pword + "&text=" + message + "&to=" + mobile + "&from=SmartWin", function(err, res, body) {
-    http.get("http://sms.airtel.lk:5000/sms/send_sms.php?username=smart_win&password=eTomfGJt7ZQ2ai&src=SMART%20WIN&dst=" + mobile + "&msg=" + message + "&dr=1&lan=u", function(err, res, body) {
+    http.get("http://sms.airtel.lk:5000/sms/send_sms.php?username=smart_win&password=eTomfGJt7ZQ2ai&src=SMART%20WIN&dst=" + mobile + "&msg=" + message + "&dr=1", function(err, res, body) {
         if (err) {
             console.log("SMS  -------------- eroor on");
             console.log(body);
