@@ -634,11 +634,9 @@ exports.formOne = (req, res, next) => {
                 var ref = dd + "" + ro.insertId;
                 mycon.execute("UPDATE `refaral` SET `ref`='" + ref + "' WHERE `id`=" + ro.insertId, (e, r, n) => {             
                     if (!e) {
-                        //Main
                         var textMg = "Your System Ref Code is : SR " + ref + " Product Cord SWE-" + req.body.product + " PV- 01 Pay LKR. " + req.body.price + " Sampath Bank Kurunegala Super Branch Smart Win Enterpreneur (Privet) Limited current Acc. No. 000610016871. PEOPLES BANK Kurunegala maliyadewa  main Branch Acc: 226 100 1800 63581 ඉහත සදහන් බැංකු ගිණුම් වලින් ඔබට පහසු ගිණුමකට මුදල් තැන්පත්කල හැකි අතර මුදල් තැන්පත් කිරිමේදි තැන්පතු පතේ මුදල් තැන්පත් කිරිමට හේතුව  තිරුවේ SR අංකය සදහන් කරන්න  සම්පත් බැංකුවේ ගිණුමට මුදල් තැන්පත් කිරිමේදි පමණක් CDM යන්ත්‍රයෙන් මුදල් තැන්පත්කල හැකි අතර එවිට Reference යටතේ  SR අංකය සටහන් කරන්න.";
                         mg.smsSend({ mob: req.body.mobile, message: textMg });
                         res.send({ SR: ref, id: ro.insertId });
-
                     } else { res.send(e) }
                 });
             } else {
