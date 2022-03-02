@@ -9,50 +9,48 @@ var dateFormat = require('dateformat');
 const http = require('http');
 const cors = require('cors');
 const app = express();
-const axios = require('axios')
-const initializeApp = "firebase/app";
+const axios = require('axios');
+const initializeApp = 'firebase/app';
 const indexRouter = require('./routers/index');
 const usersRout = require('./routers/userRout');
 const treeRout = require('./routers/treeRout');
 const prodRout = require('./routers/prodRout');
 const invoiceRout = require('./routers/invoice');
 const uploadRout = require('./routers/upload');
-const onpay = require('./routers/onPayRout')
-
-
+const onpay = require('./routers/onPayRout');
 
 const allowedOrigins = [
-    '*',
-    'capacitor://localhost',
-    'ionic://localhost',
-    'http://localhost',
-    'https://smartwin.lk',
-    'http://smartwin.lk',
-    'https://sw.smartwin.lk',
-    'http://sw.smartwin.lk',
-    'http://localhost:4200',
-    'http://localhost:8080',
-    'http://localhost:8100',
-    'https://api.smartwin.lk',
-    'http://api.smartwin.lk',
-    'http://smartwinent.com',
-    'https://smartwinent.com',
-    'http://sw.smartwinent.com',
-    'https://sw.smartwinent.com',
-    'https://api.smartwinent.a2hosted.com',
-    'https://smartwin.smartwinent.a2hosted.com'
-
+  '*',
+  'capacitor://localhost',
+  'ionic://localhost',
+  'http://localhost',
+  'https://smartwin.lk',
+  'http://smartwin.lk',
+  'https://sw.smartwin.lk',
+  'http://sw.smartwin.lk',
+  'http://127.0.0.1:8080',
+  'http://localhost:4200',
+  'http://localhost:8080',
+  'http://localhost:8100',
+  'https://api.smartwin.lk',
+  'http://api.smartwin.lk',
+  'http://smartwinent.com',
+  'https://smartwinent.com',
+  'http://sw.smartwinent.com',
+  'https://sw.smartwinent.com',
+  'http://pwa.smartwinent.com',
+  'https://pwa.smartwinent.com',
 ];
 
 const corsOptions = {
-    origin: (origin, callback) => {
-        if (allowedOrigins.includes(origin) || !origin) {
-            callback(null, true);
-        } else {
-            callback(new Error('Origin not allowed by CORS'));
-        }
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Origin not allowed by CORS'));
     }
-}
+  },
+};
 
 app.options('*', cors(corsOptions));
 app.use(cors());
@@ -61,7 +59,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 app.use('/', indexRouter);
 
@@ -77,77 +74,72 @@ app.use('/up', uploadRout);
 
 app.use('/onpay', onpay);
 
-
-
 app.use((req, res, next) => {
-    const error = new Error('Not Found');
-    error.status = 404;
-    console.log(error.message);
-    next(error);
+  const error = new Error('Not Found');
+  error.status = 404;
+  console.log(error.message);
+  next(error);
 });
 
-
-
 app.get('/', cors(corsOptions), (req, res, next) => {
-    res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
-})
-
+  res.json({ message: 'This route is CORS-enabled for an allowed origin.' });
+});
 
 app.use((error, req, res, next) => {
-    res.status(error.status || 500);
-    res.json({
-        error: {
-            message: error.message
-        }
-    })
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message,
+    },
+  });
 });
 
 var x = 0;
 
 function time() {
-    setTimeout(() => {
-        try {
-            let us = new Date().toLocaleString('en-US', { timeZone: 'Asia/Colombo' });
-            console.log(us);
-            let current = dateFormat(us, "yyyy-mm-dd");
-            console.log(current);
-            mycon.execute("SELECT sw_process.idProcess,sw_process.dateTime FROM sw_process ORDER BY sw_process.idProcess DESC LIMIT 1", (e, r, f) => {
-                let last = r[0].dateTime;
-                last = new Date(last);
-                last = dateFormat(last, "yyyy-mm-dd");
-                // if (last < current) {
+  setTimeout(() => {
+    try {
+      let us = new Date().toLocaleString('en-US', { timeZone: 'Asia/Colombo' });
+      console.log(us);
+      let current = dateFormat(us, 'yyyy-mm-dd');
+      console.log(current);
+      mycon.execute(
+        'SELECT sw_process.idProcess,sw_process.dateTime FROM sw_process ORDER BY sw_process.idProcess DESC LIMIT 1',
+        (e, r, f) => {
+          let last = r[0].dateTime;
+          last = new Date(last);
+          last = dateFormat(last, 'yyyy-mm-dd');
+          // if (last < current) {
 
+          let send = {};
 
-                let send = {}
+          // axios.post('http://apitesting.tradexzone.com/tree/process', send)
+          //     .then(res => {
+          //         console.log(`statusCode: ${res[0]}`)
+          //         // console.log(res)
+          //     })
+          //     .catch(error => {
+          //         console.error(error)
+          //     })
 
-                // axios.post('http://apitesting.tradexzone.com/tree/process', send)
-                //     .then(res => {
-                //         console.log(`statusCode: ${res[0]}`)
-                //         // console.log(res)  
-                //     })
-                //     .catch(error => {
-                //         console.error(error)
-                //     })
-
-
-
-                // http.get("http://apitesting.tradexzone.com/tree/process"
-                //     , function (err, res, body) {
-                //         if (err) {
-                //             console.log(err);
-                //         }
-                //     }
-                // );
-                console.log("RUN");
-                // } else {
-                //     console.log("NOT RUN");
-                // }
-            })
-        } catch (error) {
-            console.log(error);
+          // http.get("http://apitesting.tradexzone.com/tree/process"
+          //     , function (err, res, body) {
+          //         if (err) {
+          //             console.log(err);
+          //         }
+          //     }
+          // );
+          console.log('RUN');
+          // } else {
+          //     console.log("NOT RUN");
+          // }
         }
-        time();
-    }, 10000);
+      );
+    } catch (error) {
+      console.log(error);
+    }
+    time();
+  }, 10000);
 }
 
 // time();

@@ -201,12 +201,10 @@ exports.signUp = (req, res, next) => {
     mycon.execute(q, (e, r, f) => {
       if (!e) {
         if (r.length > 0) {
-          return res
-            .status(401)
-            .json({
-              message:
-                'This Email Address Alrady Exsist Please Login Or Register With Other Email',
-            });
+          return res.status(401).json({
+            message:
+              'This Email Address Alrady Exsist Please Login Or Register With Other Email',
+          });
         } else {
           bcript.hash(req.body.pword, 10, (err, hash) => {
             if (err) {
@@ -619,8 +617,11 @@ exports.sendBulkSms = (req, res, next) => {
             var to = arr.pop();
             console.log(to);
 
+            // var mgg =
+            //   'Sinhala Hindu aluth aurudu udawen pasu ayathanaye weda aramba kirima saha ganu denu kirima 2021-04-18 dina udesana 8.30 ta karyalayedi pewethwe. a sandaha sahabagiwana lesa obata aradana..  From Smart Win Entrepreneur (pvt) Ltd';
+
             var mgg =
-              'Sinhala Hindu aluth aurudu udawen pasu ayathanaye weda aramba kirima saha ganu denu kirima 2021-04-18 dina udesana 8.30 ta karyalayedi pewethwe. a sandaha sahabagiwana lesa obata aradana..  From Smart Win Entrepreneur (pvt) Ltd';
+              'Important nortice Due to increasing costs out of our control please note that since 1st March 2022 there will be a small price increase to some of products and services that we provide. We will be posting an updated price list over the next few days. Thank you for your understanding and continued support. 🏆 - to win your life - ❤️  විශේෂ නිවේදනයයි වර්තමානයේ පවතින උද්ධමනය හේතුවෙන් 2022 මාර්තු 1 වන දින සිට අප අයතනය සපයන සමහර නිෂ්පාදන සහ සේවා සඳහා සුළු මිල වැඩිවීමක් සිදුවන බව කරුණාවෙන් දැනුම් දෙමු.  නව මිලගණන් වල විස්තර ඉදිරි දින වලදී ප්‍රකාශයට පත්කරනු ලැබේ. ඔබ ලබාදෙන සහයෝගයට සහ අඛණ්ඩව අප සමග රැදි සිටිම වෙනුවෙන් අපගේ ස්තූතිය පුදකර සිටිමු. 🏆 - දිනන්න ඔබේ  ජිවිතය -❤️';
 
             let param = { message: mgg, mob: to };
 
