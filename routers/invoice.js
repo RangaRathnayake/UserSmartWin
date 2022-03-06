@@ -5,16 +5,15 @@ const invoice = require('../controllers/invoice/invoice');
 const checkAuth = require('../middleware/check-auth');
 
 //user
-router.post("/getAllInvoice", invoice.getAllInvoice);
-router.post("/getInvoicePayment", invoice.getInvoicePayment);
-router.post("/getTotPaid", invoice.getTotPaid);
-router.post("/newInvoice", invoice.newInvoice);
-router.post("/getInvoiceData", invoice.getInvoiceData);
-router.post("/getFullIncom", invoice.getFullIncom);
-router.post("/getPointExpenses", invoice.getPointExpenses);
-router.post("/getCommitionExpenses", invoice.getCommitionExpenses);
-router.post("/getreflist", invoice.getbanreflist);
-
-
+router.post('/getAllInvoice', invoice.getAllInvoice);
+router.post('/getInvoicePayment', invoice.getInvoicePayment);
+router.post('/getTotPaid', invoice.getTotPaid);
+router.post('/newInvoice', invoice.newInvoice);
+router.post('/getInvoiceData', invoice.getInvoiceData);
+router.post('/getFullIncom', invoice.getFullIncom);
+router.post('/getPointExpenses', invoice.getPointExpenses);
+router.post('/getCommitionExpenses', invoice.getCommitionExpenses);
+router.post('/getreflist', invoice.getbanreflist);
+router.post('/totalCommitionByDateRange', invoice.totalCommitionByDateRange);
 
 module.exports = router;
