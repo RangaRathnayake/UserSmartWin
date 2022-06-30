@@ -1,11 +1,9 @@
 {
     "env": {
         "JWT_KEY": "secret",
-        "host": "containers-us-west-33.railway.app",
-        "port": 7381,
+        "host": "localhost",
         "user": "root",
-        "password": "aveT5wNARY0SC98FWCtX",
-        "database": "smart_win"
-
+        "password": "root",
+        "database": "swwin"
     }
 }
