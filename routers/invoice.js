@@ -15,5 +15,9 @@ router.post('/getPointExpenses', invoice.getPointExpenses);
 router.post('/getCommitionExpenses', invoice.getCommitionExpenses);
 router.post('/getreflist', invoice.getbanreflist);
 router.post('/totalCommitionByDateRange', invoice.totalCommitionByDateRange);
+router.post(
+  '/totalCommitionByDateRangePIN',
+  invoice.totalCommitionByDateRangePIN
+);
 
 module.exports = router;

@@ -97,16 +97,16 @@ exports.saveoncus = (req, res, next) => {
   try {
     mycon.execute(
       "INSERT INTO `on_cus` ( `user_ful_name`, `mobile`, `adress`, `postalcode`, `email`, `active_status` ) VALUES ( '" +
-        req.body.user_ful_name +
-        "', '" +
-        req.body.mobile +
-        "', '" +
-        req.body.adress +
-        "', '" +
-        req.body.postalcode +
-        "', '" +
-        req.body.email +
-        "', '1' );",
+      req.body.user_ful_name +
+      "', '" +
+      req.body.mobile +
+      "', '" +
+      req.body.adress +
+      "', '" +
+      req.body.postalcode +
+      "', '" +
+      req.body.email +
+      "', '1' );",
       (error, rows, fildData) => {
         if (!error) {
           res.send(rows);
@@ -123,8 +123,8 @@ exports.getuidbymob = (req, res, next) => {
   try {
     mycon.execute(
       "SELECT on_cus.on_cus_id FROM `on_cus` WHERE on_cus.mobile = '" +
-        req.body.mob +
-        "'",
+      req.body.mob +
+      "'",
       (error, rows, fildData) => {
         if (!error) {
           res.send(rows);
@@ -270,8 +270,8 @@ exports.saveNewUser = (req, res, next) => {
 
     mycon.execute(
       "INSERT INTO `user` (  `status`, `dateTime`, `utypeId` ) VALUES (0, '" +
-        day +
-        "', 5 )",
+      day +
+      "', 5 )",
       (error, rows, fildData) => {
         if (!error) {
           let uid = rows.insertId;
@@ -310,8 +310,8 @@ exports.searchUserById = (req, res, next) => {
   try {
     mycon.execute(
       "SELECT userkey.`key`,uservalue.`value`,uservalue.idUserValue,uservalue.userId,uservalue.keyId,uservalue.valueStatus,userkey.keyOder,userkey.formId,userkey.type FROM uservalue INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.userId= '" +
-        req.body.uid +
-        "' ORDER BY userkey.keyOder ASC",
+      req.body.uid +
+      "' ORDER BY userkey.keyOder ASC",
       (error, rows, fildData) => {
         if (!error) {
           res.send(rows);
@@ -334,8 +334,8 @@ exports.sendLoginInformation = (uid) => {
 
     mycon.execute(
       "SELECT userkey.`key`,uservalue.`value`,uservalue.idUserValue,uservalue.userId,uservalue.keyId,uservalue.valueStatus,userkey.keyOder,userkey.formId,userkey.type FROM uservalue INNER JOIN userkey ON uservalue.keyId=userkey.idUserKey WHERE uservalue.userId= '" +
-        uid +
-        "' ORDER BY userkey.keyOder ASC",
+      uid +
+      "' ORDER BY userkey.keyOder ASC",
       (e, r, f) => {
         if (!e) {
           r.forEach((el) => {
@@ -397,7 +397,7 @@ exports.createPassword = (req, res, next) => {
   try {
     mycon.execute(
       'SELECT `user`.email,`user`.pword,`user`.mobileno,`user`.authcode,`user`.idUser,`user`.`status`,`user`.dateTime,`user`.utypeId FROM `user` WHERE `user`.idUser=' +
-        b.uid,
+      b.uid,
       (e, r, f) => {
         if (!e) {
           if (r[0] && r[0].authcode == b.code) {
@@ -412,9 +412,9 @@ exports.createPassword = (req, res, next) => {
                 console.log(hash);
                 mycon.execute(
                   "UPDATE  `user` SET  `pword` = '" +
-                    hash +
-                    "',  `status` = 1, `utypeId` = 3 WHERE	`idUser` = " +
-                    b.uid,
+                  hash +
+                  "',  `status` = 1, `utypeId` = 3 WHERE	`idUser` = " +
+                  b.uid,
                   (ee, rr, ff) => {
                     if (!ee) {
                       res.send({ mg: 'password created' });
@@ -448,8 +448,8 @@ exports.getTreeId = (req, res, next) => {
   try {
     mycon.execute(
       "SELECT sw_tree.swTreeId,sw_tree.parentId,sw_tree.A,sw_tree.B,sw_tree.userId,sw_tree.commitionId,sw_tree.APoint,sw_tree.BPoint,sw_tree.layar,sw_tree.`status`,sw_tree.userName,sw_tree.other1,sw_tree.other2 FROM sw_tree WHERE sw_tree.userId='" +
-        req.body.uid +
-        "' ORDER BY sw_tree.swTreeId ASC LIMIT 1",
+      req.body.uid +
+      "' ORDER BY sw_tree.swTreeId ASC LIMIT 1",
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -482,8 +482,8 @@ exports.getUsersListBYNic = (req, res, next) => {
   try {
     mycon.execute(
       "SELECT `user`.idUser, uservalue.`value` FROM `user` INNER JOIN uservalue ON uservalue.userId = `user`.idUser INNER JOIN userkey ON uservalue.keyId = userkey.idUserKey WHERE uservalue.keyId = 21 AND uservalue.`value` LIKE '" +
-        req.body.nic +
-        "%' ORDER BY `user`.idUser ASC",
+      req.body.nic +
+      "%' ORDER BY `user`.idUser ASC",
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -562,7 +562,7 @@ exports.getUserDataByPin = (req, res, next) => {
 
 exports.getPinsById = (req, res, next) => {
   let q =
-    'SELECT sw_tree.swTreeId as `key`, sw_tree.swTreeId as `value` FROM sw_tree WHERE sw_tree.userId=' +
+    'SELECT sw_tree.swTreeId AS id,sw_tree.swTreeId AS `key`,sw_tree.swTreeId AS `value`,sw_tree.parentId AS pid,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree WHERE sw_tree.userId=' +
     req.body.uid;
   mycon.execute(q, (er, ro, fi) => {
     if (!er) {
@@ -574,6 +574,53 @@ exports.getPinsById = (req, res, next) => {
   });
 };
 
+// exports.getPinsById = (req, res, next) => {
+//   console.log(req.body);
+//   let arr = [];
+//   try {
+//     function getNode(id) {
+//       mycon.execute(
+//         'SELECT sw_tree.swTreeId AS id, sw_tree.swTreeId as `key`, sw_tree.swTreeId as `value`, sw_tree.parentId AS pid,sw_tree.A,sw_tree.B,sw_tree.APoint,sw_tree.BPoint,sw_tree.userName AS img,`user`.email,uservalue.`value` AS `name`,sw_tree.commitionId AS title,sw_tree.userId FROM sw_tree INNER JOIN `user` ON `user`.idUser=sw_tree.userId LEFT JOIN uservalue ON uservalue.userId=`user`.idUser WHERE uservalue.keyId=2 AND sw_tree.swTreeId=' +
+//           id,
+//         (error, rows, fildData) => {
+//           if (!error) {
+//             let nod = rows[0];
+//             // console.log('-----------------------------------------------------');
+//             // console.log(nod);
+//             // console.log('------------------------------------------------------');
+//             if (nod) {
+//               arr.push(nod);
+//               if (nod.A && nod.A > 0) {
+//                 getNode(nod.A);
+//               }
+
+//               if (nod.B && nod.B > 0) {
+//                 getNode(nod.B);
+//               }
+//             }
+//           }
+//         }
+//       );
+//     }
+//     console.log(req.body.uid);
+//     getNode(req.body.uid);
+
+//     let resArr;
+//     function search() {
+//       console.log(arr);
+//       resArr = arr.filter((e) => e.userId == req.body.uid);
+//       res.send(resArr);
+//     }
+
+//     setTimeout(() => {
+//       search();
+//     }, 6000);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).send(error);
+//   }
+// };
+
 exports.singalMessage = (req, res, next) => {
   mg.smsSend(req.body);
 
@@ -584,8 +631,8 @@ exports.getValue = (req, res, next) => {
   try {
     mycon.execute(
       "SELECT keyval.id,keyval.`key`,keyval.`value` FROM keyval WHERE keyval.`key`='" +
-        req.body.key +
-        "'",
+      req.body.key +
+      "'",
       (error, rows, fildData) => {
         if (!error) {
           res.send(rows);
@@ -597,6 +644,16 @@ exports.getValue = (req, res, next) => {
     res.status(500).send(error);
   }
 };
+
+exports.sendTestSms = (req, res, next) => {
+ var msg = req.body.msg;
+ var to = req.body.to;
+
+  let param = { message: msg, mob: to };
+
+  mg.smsSend(param);
+
+}
 
 exports.sendBulkSms = (req, res, next) => {
   try {
@@ -617,11 +674,8 @@ exports.sendBulkSms = (req, res, next) => {
             var to = arr.pop();
             console.log(to);
 
-            // var mgg =
-            //   'Sinhala Hindu aluth aurudu udawen pasu ayathanaye weda aramba kirima saha ganu denu kirima 2021-04-18 dina udesana 8.30 ta karyalayedi pewethwe. a sandaha sahabagiwana lesa obata aradana..  From Smart Win Entrepreneur (pvt) Ltd';
-
             var mgg =
-              'Important nortice Due to increasing costs out of our control please note that since 1st March 2022 there will be a small price increase to some of products and services that we provide. We will be posting an updated price list over the next few days. Thank you for your understanding and continued support. 🏆 - to win your life - ❤️  විශේෂ නිවේදනයයි වර්තමානයේ පවතින උද්ධමනය හේතුවෙන් 2022 මාර්තු 1 වන දින සිට අප අයතනය සපයන සමහර නිෂ්පාදන සහ සේවා සඳහා සුළු මිල වැඩිවීමක් සිදුවන බව කරුණාවෙන් දැනුම් දෙමු.  නව මිලගණන් වල විස්තර ඉදිරි දින වලදී ප්‍රකාශයට පත්කරනු ලැබේ. ඔබ ලබාදෙන සහයෝගයට සහ අඛණ්ඩව අප සමග රැදි සිටිම වෙනුවෙන් අපගේ ස්තූතිය පුදකර සිටිමු. 🏆 - දිනන්න ඔබේ  ජිවිතය -❤️';
+              'Happy Sinhala and Tamil New Year !  May this New Year be a year of eace, happiness and prosperity. Win your life with Smart Win Entrepreneur (pvt) Ltd';
 
             let param = { message: mgg, mob: to };
 
@@ -662,8 +716,8 @@ exports.bankCodeBranchCode = (req, res, next) => {
 
             mycon.execute(
               "SELECT uservalue.`value` FROM uservalue WHERE uservalue.userId='" +
-                uid +
-                "' AND uservalue.keyId=23",
+              uid +
+              "' AND uservalue.keyId=23",
               (e, r, f) => {
                 if (!e) {
                   if (r[0]) {
@@ -673,8 +727,8 @@ exports.bankCodeBranchCode = (req, res, next) => {
 
                     mycon.execute(
                       "INSERT INTO `uservalue`( `userId`, `keyId`, `value`, `valueStatus`) VALUES ( '" +
-                        uid +
-                        "', '23', '', 1)",
+                      uid +
+                      "', '23', '', 1)",
                       (ee, rr, ff) => {
                         if (ee) {
                           console.log(ee);
@@ -683,8 +737,8 @@ exports.bankCodeBranchCode = (req, res, next) => {
                     );
                     mycon.execute(
                       "INSERT INTO `uservalue`( `userId`, `keyId`, `value`, `valueStatus`) VALUES ( '" +
-                        uid +
-                        "', '24', '', 1)",
+                      uid +
+                      "', '24', '', 1)",
                       (eee, rrr, fff) => {
                         if (eee) {
                           console.log(eee);
@@ -718,8 +772,8 @@ exports.findByNic = (req, res, next) => {
   try {
     mycon.execute(
       "SELECT uservalue.idUserValue,uservalue.userId,uservalue.keyId,uservalue.`value`,uservalue.valueStatus FROM uservalue WHERE uservalue.keyId=21 AND uservalue.`value`='" +
-        req.body.nic +
-        "'",
+      req.body.nic +
+      "'",
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -738,35 +792,35 @@ exports.formOne = (req, res, next) => {
     var dd = dateFormat(new Date(), 'yymmdd');
     mycon.execute(
       "INSERT INTO `refaral` (`ref`,`iSWno`,`namewith`,`nic`,`address`,`mobile`,`payType`,`status`,`userId`,`day`,`product`,`price`) VALUES (''," +
-        req.body.iSWno +
-        ",'" +
-        this.realEscapeString(req.body.name) +
-        "','" +
-        req.body.nic +
-        "','" +
-        this.realEscapeString(req.body.address) +
-        "','" +
-        req.body.mobile +
-        "','" +
-        req.body.type +
-        "',0," +
-        req.body.userId +
-        ",'" +
-        day +
-        "','" +
-        req.body.product +
-        "','" +
-        req.body.price +
-        "')",
+      req.body.iSWno +
+      ",'" +
+      this.realEscapeString(req.body.name) +
+      "','" +
+      req.body.nic +
+      "','" +
+      this.realEscapeString(req.body.address) +
+      "','" +
+      req.body.mobile +
+      "','" +
+      req.body.type +
+      "',0," +
+      req.body.userId +
+      ",'" +
+      day +
+      "','" +
+      req.body.product +
+      "','" +
+      req.body.price +
+      "')",
       (er, ro, fi) => {
         if (!er) {
           console.log(ro.insertId);
           var ref = dd + '' + ro.insertId;
           mycon.execute(
             "UPDATE `refaral` SET `ref`='" +
-              req.body.mobile +
-              "' WHERE `id`=" +
-              ro.insertId,
+            req.body.mobile +
+            "' WHERE `id`=" +
+            ro.insertId,
             (e, r, n) => {
               if (!e) {
                 var textMg =
@@ -776,7 +830,8 @@ exports.formOne = (req, res, next) => {
                   req.body.product +
                   ' PV- 01 Pay LKR. ' +
                   req.body.price +
-                  ' BOC 2nd  City Branch Kurunegala Smart win Enterpreneur (PVT) LTD Acc no 87813644 මුදල් තැන්පත් කිරිමේදි තැන්පතු පතේ මුදල් තැන්පත් කිරිමට හේතුව  තිරුවේ SR අංකය සදහන් කරන්න   CDM යන්ත්‍රයෙන් මුදල් තැන්පත් කිරිමේදි දුරකථන අංකය සදහන් කරන ස්ථානයේ  SR අංකය  සටහන් කරන්න.  ඔබ විසින් ඇනවුම් කරනලද නිෂ්පාදනය හෝ සේවාව දින 30 ක් ඇතුලත smart win ආයතනයෙන් නිදහස් කරගැනිමට අනිවර්‍ය්යෙන්ම කටයුතු කලයුතු වේ. (It is imperative to get rid of the product or service you have ordered from smart win within 30 days.) T and C Apply. Far inquiry call Tel. 0372234777 WhatsApp / Telegram 0755443399';
+                  'XXXXXXXXXXXXX';
+                  // ' BOC 2nd  City Branch Kurunegala Smart win Enterpreneur (PVT) LTD Acc no 87813644 මුදල් තැන්පත් කිරිමේදි තැන්පතු පතේ මුදල් තැන්පත් කිරිමට හේතුව  තිරුවේ SR අංකය සදහන් කරන්න   CDM යන්ත්‍රයෙන් මුදල් තැන්පත් කිරිමේදි දුරකථන අංකය සදහන් කරන ස්ථානයේ  SR අංකය  සටහන් කරන්න.  ඔබ විසින් ඇනවුම් කරනලද නිෂ්පාදනය හෝ සේවාව දින 30 ක් ඇතුලත smart win ආයතනයෙන් නිදහස් කරගැනිමට අනිවර්‍ය්යෙන්ම කටයුතු කලයුතු වේ. (It is imperative to get rid of the product or service you have ordered from smart win within 30 days.) T and C Apply. Far inquiry call Tel. 0372234777 WhatsApp / Telegram 0755443399';
 
                 mg.smsSend({ mob: req.body.mobile, message: textMg });
 
@@ -801,12 +856,12 @@ exports.getMyref = (req, res, next) => {
   try {
     mycon.execute(
       'SELECT refaral.id,refaral.ref,refaral.iSWno,refaral.namewith,refaral.nic,refaral.address,refaral.mobile,refaral.payType,refaral.`status`,refaral.userId,refaral.`day`,refaral.product,refaral.price FROM refaral WHERE refaral.userId=' +
-        req.body.uid +
-        ' AND refaral.`status`=' +
-        req.body.status +
-        " AND refaral.payType = '" +
-        req.body.type +
-        "'  ORDER BY refaral.id DESC",
+      req.body.uid +
+      ' AND refaral.`status`=' +
+      req.body.status +
+      " AND refaral.payType = '" +
+      req.body.type +
+      "'  ORDER BY refaral.id DESC",
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -825,7 +880,7 @@ exports.getOneRef = (req, res, next) => {
   try {
     mycon.execute(
       'SELECT refaral.id,refaral.ref,refaral.iSWno,refaral.namewith,refaral.nic,refaral.address,refaral.mobile,refaral.payType,refaral.`status`,refaral.userId,refaral.`day`,refaral.product,refaral.price FROM refaral WHERE refaral.id=' +
-        req.body.id,
+      req.body.id,
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -859,8 +914,8 @@ exports.getBranch = (req, res, next) => {
   try {
     mycon.execute(
       "SELECT branch.b_co,branch.br_code,branch.br_name FROM branch WHERE branch.b_co='" +
-        req.body.bcode +
-        "'",
+      req.body.bcode +
+      "'",
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -879,10 +934,10 @@ exports.addCoreLeader = (req, res, next) => {
   try {
     mycon.execute(
       "INSERT INTO  `leader_main`(  `main`, `name`) VALUES (  '" +
-        req.body.muid +
-        "', '" +
-        req.body.name +
-        "')",
+      req.body.muid +
+      "', '" +
+      req.body.name +
+      "')",
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -919,12 +974,12 @@ exports.addKeyLeader = (req, res, next) => {
   try {
     mycon.execute(
       'INSERT INTO `leader_key`(  `mid`, `key`, `name`) VALUES (  ' +
-        req.body.mid +
-        ', ' +
-        req.body.kuid +
-        ", '" +
-        req.body.kname +
-        "')",
+      req.body.mid +
+      ', ' +
+      req.body.kuid +
+      ", '" +
+      req.body.kname +
+      "')",
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -943,7 +998,7 @@ exports.getKeyLeaders = (req, res, next) => {
   try {
     mycon.execute(
       'SELECT leader_key.id,leader_key.mid,leader_key.`key`,leader_key.`name` FROM leader_key WHERE leader_key.mid=' +
-        req.body.mid,
+      req.body.mid,
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -962,34 +1017,34 @@ exports.updateRefData = (req, res, next) => {
   try {
     mycon.execute(
       'UPDATE `refaral` SET `status`=' +
-        req.body.status +
-        ',`aPin`=' +
-        req.body.aPin +
-        ',`aPinUid`=' +
-        req.body.aPinUid +
-        ",`side`='" +
-        req.body.side +
-        "',`otherint1`='" +
-        req.body.otherint1 +
-        "',`otherint2`='" +
-        req.body.otherint2 +
-        "',`otherstring1`='" +
-        req.body.otherstring1 +
-        "',`otherstring2`='" +
-        req.body.otherstring2 +
-        "' WHERE `id`=" +
-        req.body.ref,
+      req.body.status +
+      ',`aPin`=' +
+      req.body.aPin +
+      ',`aPinUid`=' +
+      req.body.aPinUid +
+      ",`side`='" +
+      req.body.side +
+      "',`otherint1`='" +
+      req.body.otherint1 +
+      "',`otherint2`='" +
+      req.body.otherint2 +
+      "',`otherstring1`='" +
+      req.body.otherstring1 +
+      "',`otherstring2`='" +
+      req.body.otherstring2 +
+      "' WHERE `id`=" +
+      req.body.ref,
       (er, ro, fi) => {
         if (!er) {
           req.body.vlaues.forEach((element) => {
             mycon.execute(
               'INSERT INTO  `temp_data`(  `refaral`, `key`, `value`, `status`) VALUES (  ' +
-                req.body.ref +
-                ", '" +
-                element.idUserKey +
-                "', '" +
-                this.rss(element.val) +
-                "', 1)",
+              req.body.ref +
+              ", '" +
+              element.idUserKey +
+              "', '" +
+              this.rss(element.val) +
+              "', 1)",
               (e, r, f) => {
                 if (e) {
                   console.log(e);
@@ -1013,8 +1068,8 @@ exports.allBankRef = (req, res, next) => {
   try {
     mycon.execute(
       'SELECT refaral.id,refaral.ref,refaral.iSWno,refaral.namewith,refaral.nic,refaral.address,refaral.mobile,refaral.payType,refaral.`status`,refaral.userId,refaral.`day`,refaral.product,refaral.price,refaral.imagePath,refaral.bankRef,refaral.aPin,refaral.aPinUid,refaral.side,refaral.otherint1,refaral.otherint2,refaral.otherstring1,refaral.otherstring2 FROM refaral WHERE refaral.`status`=' +
-        req.body.status +
-        " AND refaral.payType='b' ORDER BY refaral.id ASC",
+      req.body.status +
+      " AND refaral.payType='b' ORDER BY refaral.id ASC",
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -1069,7 +1124,7 @@ exports.getBankRefarance = (req, res, next) => {
   try {
     mycon.execute(
       'SELECT refaral.id,refaral.ref,refaral.iSWno,refaral.namewith,refaral.nic,refaral.address,refaral.mobile,refaral.payType,refaral.`status`,refaral.userId,refaral.`day`,refaral.product,refaral.price,refaral.imagePath,refaral.bankRef,refaral.aPin,refaral.aPinUid,refaral.side,refaral.otherint1,refaral.otherint2,refaral.otherstring1,refaral.otherstring2 FROM refaral WHERE refaral.id=' +
-        req.body.ref,
+      req.body.ref,
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);
@@ -1088,8 +1143,8 @@ exports.getTempData = (req, res, next) => {
   try {
     mycon.execute(
       'SELECT temp_data.id,temp_data.refaral,temp_data.`key` as idUserKey,temp_data.`value` as val,temp_data.`status` FROM temp_data WHERE temp_data.refaral=' +
-        req.body.ref +
-        '',
+      req.body.ref +
+      '',
       (er, ro, fi) => {
         if (!er) {
           res.send(ro);

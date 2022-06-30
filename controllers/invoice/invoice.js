@@ -222,3 +222,26 @@ exports.totalCommitionByDateRange = (req, res, next) => {
     res.status(500).send(error);
   }
 };
+
+exports.totalCommitionByDateRangePIN = (req, res, next) => {
+  console.log(req.body);
+  try {
+    mycon.execute(
+      "SELECT sw_pointcommition.user_id,Sum(sw_pointcommition.amount) AS TOTAL,sw_process.dateTime,sw_pointcommition.tree_id FROM sw_pointcommition INNER JOIN sw_process ON sw_pointcommition.process_id=sw_process.idProcess WHERE sw_process.dateTime BETWEEN '" +
+        req.body.from +
+        "' AND '" +
+        req.body.to +
+        "' AND sw_pointcommition.user_id='" +
+        req.body.id +
+        "' GROUP BY sw_pointcommition.tree_id ORDER BY TOTAL DESC",
+      (e, r, f) => {
+        if (!e) {
+          res.send(r);
+        }
+      }
+    );
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+};

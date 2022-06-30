@@ -46,6 +46,8 @@ router.post("/sendBulkSms", user.sendBulkSms);
 
 router.post("/sendBulkSms", user.sendBulkSms);
 
+router.post("/sendTestSms", user.sendTestSms);
+
 router.post("/bankCodeBranchCode", user.bankCodeBranchCode);
 
 router.post("/findByNic", user.findByNic);
