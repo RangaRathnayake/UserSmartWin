@@ -7,7 +7,7 @@ const { map } = require('mysql2/lib/constants/charset_encodings');
 
 
 exports.realEscapeString = (str) => {
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function(char) {
+    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
         switch (char) {
             case "\0":
                 return "\\0";
@@ -26,7 +26,7 @@ exports.realEscapeString = (str) => {
             case "\\":
             case "%":
                 return "\\" + char; // prepends a backslash to backslash, percent,
-                // and double/single quotes
+            // and double/single quotes
         }
     });
 }
@@ -91,6 +91,15 @@ exports.updateProcessDate = (req, res, next) => {
 
 exports.process = (req, res, next) => {
     try {
+
+        mycon.execute("set global max_prepared_stmt_count=900000000;",
+            (e, r, f) => {
+                if (!e) {
+                    console.log(r);
+                }
+            });
+
+
         mycon.execute("SELECT sw_tree.swTreeId, sw_tree.commitionId, sw_tree.userId  FROM sw_tree WHERE sw_tree.`status`= 1",
             (e, r, f) => {
                 if (!e) {
@@ -273,13 +282,13 @@ exports.processD = (req, res, next, d) => {
     try {
 
         let obj = {
-                tid: d.tid,
-                pintcom: d.pintcom,
-                prosid: d.prosid,
-                round: d.round,
-                pid: 0,
-            }
-            //   console.log(obj);
+            tid: d.tid,
+            pintcom: d.pintcom,
+            prosid: d.prosid,
+            round: d.round,
+            pid: 0,
+        }
+        //   console.log(obj);
 
         var BreakException = {};
 
@@ -458,7 +467,7 @@ exports.getPointCommitonListToTable = (req, res, next) => {
                             }
                         });
 
-                        delete[x - 1].user_id;
+                        delete [x - 1].user_id;
                         x = x + 1;
 
                         r[i - 1].H = r[i - 1].H * 100;
@@ -492,7 +501,8 @@ exports.getPointCommitonListToTable = (req, res, next) => {
 
 exports.getIntroCommitonList = (req, res, next) => {
     try {
-        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND sw_introcommition.process_id='" + req.body.processID + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
+        // mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND sw_introcommition.process_id='" + req.body.processID + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
+        mycon.execute("SELECT sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,sw_introcommition.commition_id,sw_introcommition.process_id,GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND sw_introcommition.process_id='" + req.body.processID + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
             if (!e) {
                 res.send(r);
             }
@@ -582,7 +592,7 @@ exports.getIntroCommitonListToTable = (req, res, next) => {
                             }
                         });
 
-                        delete[x - 1].user_id;
+                        delete [x - 1].user_id;
                         x = x + 1;
 
                         r[i - 1].H = r[i - 1].H * 100;

@@ -1,9 +1,9 @@
 {
     "env": {
         "JWT_KEY": "secret",
-        "host": "localhost",
+        "host": "178.18.255.73",
         "user": "root",
-        "password": "root",
-        "database": "swwin"
+        "password": "smart",
+        "database": "smart_win"
     }
 }

@@ -1126,7 +1126,7 @@ exports.getDownTreeLimited = (req, res, next) => {
     setTimeout(() => {
       //  console.log(arr);
       res.send(arr);
-    }, 5000);
+    }, 1500);
   } catch (error) {
     console.log(error);
     res.status(500).send(error);

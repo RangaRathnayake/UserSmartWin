@@ -830,9 +830,7 @@ exports.formOne = (req, res, next) => {
                   req.body.product +
                   ' PV- 01 Pay LKR. ' +
                   req.body.price +
-                  'XXXXXXXXXXXXX';
-                  // ' BOC 2nd  City Branch Kurunegala Smart win Enterpreneur (PVT) LTD Acc no 87813644 මුදල් තැන්පත් කිරිමේදි තැන්පතු පතේ මුදල් තැන්පත් කිරිමට හේතුව  තිරුවේ SR අංකය සදහන් කරන්න   CDM යන්ත්‍රයෙන් මුදල් තැන්පත් කිරිමේදි දුරකථන අංකය සදහන් කරන ස්ථානයේ  SR අංකය  සටහන් කරන්න.  ඔබ විසින් ඇනවුම් කරනලද නිෂ්පාදනය හෝ සේවාව දින 30 ක් ඇතුලත smart win ආයතනයෙන් නිදහස් කරගැනිමට අනිවර්‍ය්යෙන්ම කටයුතු කලයුතු වේ. (It is imperative to get rid of the product or service you have ordered from smart win within 30 days.) T and C Apply. Far inquiry call Tel. 0372234777 WhatsApp / Telegram 0755443399';
-
+                  ' BOC 2nd  City Branch Kurunegala Smart win Enterpreneur (PVT) LTD Acc no 87813644 මුදල් තැන්පත් කිරිමේදි තැන්පතු පතේ මුදල් තැන්පත් කිරිමට හේතුව  තිරුවේ SR අංකය සදහන් කරන්න   CDM යන්ත්‍රයෙන් මුදල් තැන්පත් කිරිමේදි දුරකථන අංකය සදහන් කරන ස්ථානයේ  SR අංකය  සටහන් කරන්න.  ඔබ විසින් ඇනවුම් කරනලද නිෂ්පාදනය හෝ සේවාව දින 30 ක් ඇතුලත smart win ආයතනයෙන් නිදහස් කරගැනිමට අනිවර්‍ය්යෙන්ම කටයුතු කලයුතු වේ. (It is imperative to get rid of the product or service you have ordered from smart win within 30 days.) T and C Apply. Far inquiry call Tel. 0372234777 WhatsApp / Telegram 0755443399';                 
                 mg.smsSend({ mob: req.body.mobile, message: textMg });
 
                 res.send({ SR: req.body.mobile, id: ro.insertId });
