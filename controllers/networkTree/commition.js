@@ -78,9 +78,15 @@ exports.getProcessDate = (req, res, next) => {
 
 exports.updateProcessDate = (req, res, next) => {
     try {
-        // var dd = dateFormat(req.body.day, "yyyy-mm-dd h:MM:ss");
-        mycon.execute("UPDATE `sw_process` SET `dateTime` = '" + req.body.day + "' WHERE `idProcess` = " + req.body.id, (e, r, f) => {
-            res.send(r);
+        console.log(req.body.day);
+        var dd = dateFormat(req.body.day, "yyyy-mm-dd h:MM:ss");
+        mycon.execute("UPDATE `sw_process` SET `dateTime` = '" + dd + "' WHERE `idProcess` = " + req.body.id, (e, r, f) => {
+            if (!e) {
+                res.send(r);
+            } else {
+                console.log(e);
+            }
+
         });
     } catch (error) {
         console.log(error);
@@ -642,9 +648,11 @@ exports.getPointCommitonByUser = (req, res, next) => {
 
 exports.getIntroCommitonByUser = (req, res, next) => {
     try {
-        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id,sw_process.dateTime FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id INNER JOIN sw_process ON sw_introcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND uservalue.userId='" + req.body.uid + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
+        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`, sw_introcommition.commition_id,sw_introcommition.process_id,sw_process.dateTime FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id INNER JOIN sw_process ON sw_introcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND uservalue.userId='" + req.body.uid + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
             if (!e) {
                 res.send(r);
+            } else {
+                console.log(e);
             }
         });
     } catch (error) {
@@ -681,7 +689,7 @@ exports.getIntroCommitonByUserDates = (req, res, next) => {
     var to = dateFormat(new Date(req.body.to), "yyyy-mm-dd");
     // console.log(from + "  -  " + to);
     try {
-        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`,uservalue.`value`,sw_introcommition.commition_id,sw_introcommition.process_id,sw_process.dateTime FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id INNER JOIN sw_process ON sw_introcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND uservalue.userId='" + req.body.uid + "' AND sw_process.dateTime BETWEEN '" + req.body.from + "' AND '" + req.body.to + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
+        mycon.execute("SELECT GROUP_CONCAT(uservalue.`value` SEPARATOR '  -  ') AS udata,sw_introcommition.idIntrocommiton,sw_introcommition.user_id,sw_introcommition.tree_id,sw_introcommition.pointcom_id,sw_introcommition.amount,sw_introcommition.`status`, sw_introcommition.commition_id,sw_introcommition.process_id,sw_process.dateTime FROM uservalue INNER JOIN sw_introcommition ON uservalue.userId=sw_introcommition.user_id INNER JOIN sw_process ON sw_introcommition.process_id=sw_process.idProcess WHERE (uservalue.keyId=2 OR uservalue.keyId=16 OR uservalue.keyId=17 OR uservalue.keyId=18) AND uservalue.userId='" + req.body.uid + "' AND sw_process.dateTime BETWEEN '" + req.body.from + "' AND '" + req.body.to + "' GROUP BY sw_introcommition.idIntrocommiton", (e, r, f) => {
             if (!e) {
                 res.send(r);
             }
